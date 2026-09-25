@@ -265,7 +265,7 @@
     <p>Each link in this chain is an action. No actor calls another directly. Maya doesn't call the notification system, and the notification system doesn't call Ada. An action happens, and whoever is watching for it reacts. That's why we can put people and machines in the same chain without special cases.</p>
   </div>
   <details class="aside" data-kind="industry">
-    <summary><span class="tag">In practice</span><span class="tease">Choreography, not orchestration</span></summary>
+    <summary><span class="tag">In practice</span><span class="tease">In microservice terms, this is choreography</span></summary>
     <div class="body">
       <p>In microservice terms this is <em>choreography</em>: services emit events and others subscribe, with no central coordinator. The usual complaint about choreography is that the overall flow becomes invisible, because it's spread across many subscribers.</p>
       <p>The concept-design answer is to make the reactions first-class and small, and to put them in one place, separate from the concepts. The paper traces the idea back to Sullivan and Notkin's "mediators" (1992), which also kept components ignorant of each other and put the wiring in separate units. The difference the paper points out is that concepts have only actions, which serve as both the API and the events.</p>
@@ -676,7 +676,7 @@
 <article class="slide" data-page="60" data-title="one invitation through the system">
   <div class="narration">
     <p>And the rest: the notify reaction reads that Austin registered his phone and does Notifying.notify. Austin reads his PENDING invitation, checks his own availability, and does Inviting.accept.</p>
-    <p>Five actors, five concepts, one invitation. A person starts it, an agent interprets, two rule-based reactions carry it along, and a person finishes it. Each step is an action you could find in the log, and each read is a record you could inspect. If this goes wrong, you can see where.</p>
+    <p>That is one invitation passing through the whole system. A person starts it, an agent interprets, two rule-based reactions carry it along, and a person finishes it. Each step is an action you could find in the log, and each read is a record you could inspect. If this goes wrong, you can see where.</p>
   </div>
   <details class="aside" data-kind="you">
     <summary><span class="tag">For you</span><span class="tease">Trace a failure through this diagram</span></summary>
