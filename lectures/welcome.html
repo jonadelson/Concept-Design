@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Welcome · 6.1040</title>
+<meta name="description" content="Narrated companion to the first 6.1040 Software Design lecture (MIT, Fall 2026).">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alegreya:wght@700&family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+</head>
+<body data-lecture="welcome" data-pdf="https://61040.github.io/fa26/lectures/welcome-no-builds.pdf">
+
+<nav class="topbar"><div class="wrap">
+  <a href="../">← Course</a>
+  <span class="crumb">Lecture 1 · Welcome</span>
+</div><div class="progress"></div></nav>
+
+<main class="wrap">
+<header class="hero">
+  <p class="kicker">Lecture 1, part one · Wed Sep 9</p>
+  <h1>Welcome</h1>
+  <p class="lede">Daniel Jackson and Mitchell Gordon open the course: who is teaching it, what kind of class it is (and isn't), the two bets it rests on, and what changed this year.</p>
+  <p class="meta">17 slides · about 15 minutes of class time · <a href="https://61040.github.io/fa26/lectures/welcome-no-builds.pdf">original PDF</a></p>
+
+  <details class="howto">
+    <summary>How to read this page</summary>
+    <ul>
+      <li>Each slide is loaded live from the course website, and below it is what the lecturer might plausibly have said. <strong>The narration is my reconstruction, not a transcript.</strong> Where a slide is only photos, I say so instead of inventing a speech.</li>
+      <li>The coloured boxes are margin notes. Tap to open.
+        <span style="color:var(--source)">Source</span> points to where an idea comes from,
+        <span style="color:var(--industry)">In practice</span> connects it to industry,
+        <span style="color:var(--debate)">Debate</span> covers where it's contested, and
+        <span style="color:var(--you)">For you</span> is about following along as a listener.</li>
+      <li>Tap a slide to see it full screen. Use <em>＋ Add a note</em> on any slide. Notes are saved on this device only. <em>Copy notes for chat</em> collects them so you can paste them to Claude.</li>
+    </ul>
+  </details>
+</header>
+
+<!-- 1 -->
+<article class="slide" data-page="1" data-title="welcome">
+  <div class="narration">
+    <p>Welcome to 6.104, Software Design. There are two of us up here, Daniel Jackson and Mitchell Gordon, and between us we cover the two sides of the subject: how software is structured, and how people actually experience it.</p>
+    <p>We should say at the start what "design" means in this room. We don't mean how the app looks. We mean deciding what the software does: which pieces of functionality it offers, how those pieces behave, and how they fit together. That work comes before code and continues while you write it. It is also the part that AI tools haven't taken over, which is a theme you'll hear a lot this term.</p>
+  </div>
+  <details class="aside" data-kind="you">
+    <summary><span class="tag">For you</span><span class="tease">Listeners are explicitly welcome</span></summary>
+    <div class="body">
+      <p>The <a href="https://61040.github.io/fa26/guide/">class guide</a> says listeners get access to all the materials but can't join project teams or submit work for grading. That describes your position exactly.</p>
+      <p>Lecture recordings exist on Panopto but need an MIT login, so the slides plus these pages stand in for being in 1-190.</p>
+    </div>
+  </details>
+  <details class="aside" data-kind="source">
+    <summary><span class="tag">Source</span><span class="tease">6.104 or 6.1040?</span></summary>
+    <div class="body"><p>They're the same class. The guide calls it "6.104 (aka 6.1040)". The slides use the short form and the website uses MIT's newer four-digit number.</p></div>
+  </details>
+</article>
+
+<!-- 2 -->
+<article class="slide" data-page="2" data-title="who we are">
+  <div class="narration">
+    <p>Let's start with the people you'll be working with.</p>
+  </div>
+</article>
+
+<!-- 3 -->
+<article class="slide" data-page="3" data-title="staff">
+  <div class="narration">
+    <p>There are three lecturers: Mitchell, me, and Arielle Blattner. There are three graduate TAs (Eagon Meng, Kartik Pingle and Carmel Schare) and two undergraduate TAs (Amalia Toutziaridi and Christine Wu). Barish Namazov runs the technical side, which this year includes a course platform we built ourselves.</p>
+    <p>You'll see the lecturers twice a week. You'll see the TAs more, in recitation, in office hours, and in feedback on your work. Recitations are where the technologies get taught: Markdown, HTML and CSS, HTTP, Mongo, a frontend framework. Lectures will mostly leave those alone.</p>
+  </div>
+  <details class="aside" data-kind="source">
+    <summary><span class="tag">Source</span><span class="tease">A name to remember: Eagon Meng</span></summary>
+    <div class="body">
+      <p>Eagon Meng and Daniel Jackson co-wrote <em>What You See Is What It Does: A Structural Pattern for Legible Software</em> (2025). The paper proposes building apps from independent <em>concepts</em> wired together by declarative <em>synchronizations</em>, so the code's structure matches the design's and LLMs can generate it piece by piece.</p>
+      <p>That idea sits under the "designing coordination", "designing reactions" and "modularity" lectures, and very likely under the course's own tooling (<a href="https://github.com/mit-sdg/syncpress">mit-sdg/syncpress</a>, which also builds the course website). It's worth reading once we reach those lectures, not before.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 4 -->
+<article class="slide" data-page="4" data-title="about me">
+  <div class="narration">
+    <p>A little about me, because my path explains a lot about how this class is shaped.</p>
+  </div>
+</article>
+
+<!-- 5 -->
+<article class="slide" data-page="5" data-title="my research interests">
+  <div class="narration">
+    <p>These three books are roughly the three chapters of my research life.</p>
+    <p>The first is about <strong>Alloy</strong>, a language and tool for modelling software designs. You describe the essential structure of a system (its sets, relations and rules) and Alloy searches for a scenario that breaks your assumptions. It rests on a bet we called the <em>small scope hypothesis</em>: most design flaws have small counterexamples, so an exhaustive search over small cases finds most of them. A model of a few dozen lines can expose a bug that months of testing would miss.</p>
+    <p>The second, the orange one, is a report from a National Academies study I chaired on <strong>dependable systems</strong>. The question was what evidence should convince us that software controlling a medical device or an aircraft is safe. Our answer was that following a certified process isn't enough. You need an explicit argument connecting the properties you care about to the evidence you have.</p>
+    <p>The third is <strong>concept design</strong>, and it's the reason this class exists in its current form. Alloy can tell you that a design is broken. It can't tell you what the design should have been. Where good designs come from, and how to describe software in terms users actually think in, is what I've spent the last decade on. <em>The Essence of Software</em> is the recommended text for this class, though you won't need it to follow along.</p>
+  </div>
+  <details class="aside" data-kind="source">
+    <summary><span class="tag">Source</span><span class="tease">The three books, and where to read them</span></summary>
+    <div class="body">
+      <ul>
+        <li><em>Software Abstractions: Logic, Language, and Analysis</em> (MIT Press, 2006; revised 2012). The tool itself is free at <a href="https://alloytools.org">alloytools.org</a>.</li>
+        <li><em>Software for Dependable Systems: Sufficient Evidence?</em> (National Research Council, 2007). It's free to read online from the National Academies Press.</li>
+        <li><em>The Essence of Software: Why Concepts Matter for Great Design</em> (Princeton, 2021). <a href="https://essenceofsoftware.com">essenceofsoftware.com</a> has essays, tutorials and a concept catalog that cover much of the book for free.</li>
+      </ul>
+    </div>
+  </details>
+  <details class="aside" data-kind="industry">
+    <summary><span class="tag">In practice</span><span class="tease">Modelling a design before building it, at AWS scale</span></summary>
+    <div class="body">
+      <p>The best-known industrial case is Amazon's. In 2015, AWS engineers described in <em>Communications of the ACM</em> how they used TLA+ (a cousin of Alloy) to model designs for S3, DynamoDB and other services, and found serious bugs that had survived review and testing.</p>
+      <p>The same instinct is back in fashion under a new name. "Spec-driven development" with AI agents means writing a precise description first and letting the model generate code from it. The class guide says concept design is consistent with spec-driven development, event-based architectures, microservices and domain-driven design. You'll be able to judge that claim yourself by week four.</p>
+    </div>
+  </details>
+  <details class="aside" data-kind="debate">
+    <summary><span class="tag">Debate</span><span class="tease">Why didn't formal modelling go mainstream?</span></summary>
+    <div class="body">
+      <p>The usual objections are that models cost time, need unusual skills, and drift from the code. Jackson's response with Alloy was "lightweight formal methods": small, partial models with fully automatic analysis.</p>
+      <p>Concept design pushes further in that direction. It keeps the precision about state and actions but drops the need for a solver and a logic. Whether it keeps enough rigour to catch real flaws is a fair question to hold in mind through the next few lectures.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 6 -->
+<article class="slide" data-page="6" data-title="when I'm not working">
+  <div class="narration">
+    <p class="stage">The slide is three photographs of floor-to-ceiling bookshelves, and the PDF has no commentary on it. Whatever was said in the room is lost. The point is plain enough, though: this is someone who reads widely.</p>
+  </div>
+  <details class="aside" data-kind="source">
+    <summary><span class="tag">Source</span><span class="tease">If you want one design book from outside software</span></summary>
+    <div class="body">
+      <p>This is my suggestion, not the course's. Christopher Alexander's <em>Notes on the Synthesis of Form</em> (1964) frames design as achieving <em>fit</em> between a form and its context, and treats a design problem as a set of interacting requirements to be broken into loosely coupled groups. Software people remember Alexander for inspiring design patterns, but this earlier book is the one closer to concept design's idea of independent, purposeful units.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 7 -->
+<article class="slide" data-page="7" data-title="how about you?">
+  <div class="narration">
+    <p>That's enough about us. We'd like to hear from you.</p>
+  </div>
+</article>
+
+<!-- 8 -->
+<article class="slide" data-page="8" data-title="what do you hope to get out of this class?">
+  <div class="narration">
+    <p>Take out your phone (this is the one time we'll ask you to). Scan the code or go to the join link, and tell us in a sentence or two what you hope to get out of this class. We'll look at the answers together.</p>
+    <p>We're asking partly because we want to know, and partly because you'll be asked the same question more carefully in your first assignment. It's easier to write half a page of goals if you've already written two sentences.</p>
+  </div>
+  <details class="aside" data-kind="you">
+    <summary><span class="tag">For you</span><span class="tease">Answer this one yourself, in the note box</span></summary>
+    <div class="body">
+      <p>The join link goes to Commons, the course platform, which only enrolled students can use. Write your answer in the note below instead. It's the seed of E1's "personal goals" section if you decide to do that exercise.</p>
+      <p>A deliberate choice on my part: the class guide says <em>never</em> to use an LLM for personal reflections, and it's right, so I won't draft this for you. Paste what you write into chat and I'll push back on it or ask follow-up questions.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 9 -->
+<article class="slide" data-page="9" data-title="about the class">
+  <div class="narration">
+    <p>Now, the class itself.</p>
+  </div>
+</article>
+
+<!-- 10 -->
+<article class="slide" data-page="10" data-title="what this class is / isn't">
+  <div class="narration">
+    <p>Here's the shortest description we can give. This is <strong>a design class</strong>. You'll design and build apps, using AI in a principled way. Most of what's worth saying is in the right-hand column, because each item there is something people reasonably expect this class to be.</p>
+    <p>It isn't <strong>a webdev class</strong>. You will learn a full web stack, and recitations will get you competent in it. But platforms change every few years, and learning their details isn't the goal.</p>
+    <p>It isn't <strong>a vibe coding class</strong>. You can now get code that mostly works without understanding it, and for a throwaway prototype that's fine. The trouble starts when you have to change it, extend it, or explain why it misbehaves. We want you to use AI heavily, and to stay the person who understands the design.</p>
+    <p>It isn't <strong>a UI class</strong> about screens and visual design, though there's a lecture on each. And it isn't <strong>an HCI class</strong> about the social and psychological side, though Mitchell will bring plenty of that in. Our focus sits underneath the interface: what the functionality is, and why it has the shape it does.</p>
+  </div>
+  <details class="aside" data-kind="debate">
+    <summary><span class="tag">Debate</span><span class="tease">Can functionality really be separated from the UI?</span></summary>
+    <div class="body">
+      <p>Many UX practitioners would say the interaction <em>is</em> the product, and that splitting "what it does" from "how it looks and feels" is artificial.</p>
+      <p>The concept-design reply: whether Gmail organises mail with labels or with folders is a decision about behaviour. It holds whatever the screens look like, and it determines what users have to understand. Don Norman called that understanding the user's "conceptual model". Concepts are an attempt to design that model on purpose.</p>
+      <p>A fair test to apply over the term: find a usability problem that has nothing to do with concepts, then one that no amount of visual polish could fix.</p>
+    </div>
+  </details>
+  <details class="aside" data-kind="source">
+    <summary><span class="tag">Source</span><span class="tease">Where "vibe coding" comes from</span></summary>
+    <div class="body"><p>Andrej Karpathy coined the phrase in February 2025, describing coding where you "fully give in to the vibes" and don't read the diffs. He was describing weekend projects, not recommending it for software people depend on.</p></div>
+  </details>
+</article>
+
+<!-- 11 -->
+<article class="slide" data-page="11" data-title="this class has 2 premises">
+  <div class="narration">
+    <p>The class rests on two premises.</p>
+    <p>The first is that <strong>design is learnable</strong>. There's a myth that good designers are born with taste and the rest of us aren't. We don't believe it. Design is a skill, and like other skills it comes from practice and from reflecting on that practice. That's why every assignment asks you to look back at what you did and why.</p>
+    <p>The second is that <strong>AI changes everything</strong>, and specifically it makes design matter more than it did. When building was expensive, ambition was limited by how much code a team could write. Building is now much cheaper, so the limit moves to deciding what should exist and how it should hang together. You can attempt a far more ambitious app than a student could five years ago. You'll only succeed if the design holds up.</p>
+  </div>
+  <details class="aside" data-kind="source">
+    <summary><span class="tag">Source</span><span class="tease">"Practice and reflection" has a pedigree</span></summary>
+    <div class="body">
+      <p>The phrase comes straight from Donald Schön's <em>The Reflective Practitioner</em> (1983). Schön was an MIT professor, and the class guide cites him. His argument is that professionals learn by "reflection-in-action", having a conversation with the situation as they work, and not by applying theory.</p>
+      <p>The other classic claim that design can be studied is Herbert Simon's <em>The Sciences of the Artificial</em> (1969). It's the book that says everyone designs "who devises courses of action aimed at changing existing situations into preferred ones".</p>
+    </div>
+  </details>
+  <details class="aside" data-kind="debate">
+    <summary><span class="tag">Debate</span><span class="tease">Or does cheap building make design matter <em>less</em>?</span></summary>
+    <div class="body">
+      <p>The strongest counter-argument: if code is nearly free, just build five versions and see which one users like. Iteration replaces up-front design.</p>
+      <p>Two replies. First, Fred Brooks's "No Silver Bullet" (1986) split difficulty into <em>accidental</em> complexity (tools, syntax, plumbing) and <em>essential</em> complexity (deciding what the system is). AI is very good at the first. The second is still there in all five versions. Second, the course doesn't teach big up-front design. E1 quotes Brooks's "plan to throw one away". Iteration and design go together, and the question is whether each iteration teaches you something.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 12 -->
+<article class="slide" data-page="12" data-title="Thomas Dohmke, GitHub CEO">
+  <div class="narration">
+    <p>Here's someone with no reason to downplay AI coding saying the same thing. Thomas Dohmke ran GitHub, the company that makes Copilot:</p>
+    <blockquote>Many Computer Science (CS) programs still center around problems that AI can now solve competently. The future belongs to developers who can model systems, anticipate edge cases, and translate ambiguity into structure—skills that AI can't automate. We need to teach abstraction, decomposition, and specification not just as pre-coding steps, but as the new coding.</blockquote>
+    <p>"Model systems", "translate ambiguity into structure", "specification as the new coding": that's close to a syllabus for this class. When you write a concept in a few weeks, with its purpose, operational principle, state and actions, that's exactly the specification he means.</p>
+  </div>
+  <details class="aside" data-kind="debate">
+    <summary><span class="tag">Debate</span><span class="tease">Two reasons to read the quote with some care</span></summary>
+    <div class="body">
+      <p>A tool vendor has an interest in saying developers remain essential while their product writes the code. That doesn't make him wrong, but it's worth noticing.</p>
+      <p>More substantively, "skills that AI can't automate" has been a moving line. Some modelling and edge-case analysis is already quite automatable when the problem is well posed. Framing the problem in the first place (which bad situation, whose, and why) is the part that has held up best. That's the subject of the next lecture.</p>
+    </div>
+  </details>
+  <details class="aside" data-kind="source">
+    <summary><span class="tag">Source</span><span class="tease">Where the quote likely comes from</span></summary>
+    <div class="body"><p>The slide gives no citation. Dohmke wrote along these lines in 2025, most prominently in an essay titled "Developers, Reinvented", about developers shifting from writing code to specifying and verifying it. I can't confirm that's the exact source of this passage, so treat the attribution as unverified.</p></div>
+  </details>
+</article>
+
+<!-- 13 -->
+<article class="slide" data-page="13" data-title="what's new (and isn't)">
+  <div class="narration">
+    <p>If you've heard about this class from friends who took it last year, here's what's the same and what's changed.</p>
+    <p>The same: the focus is designing functionality, using concepts, including thinking about consequences you didn't intend. You'll learn by building on real projects, twice: once alone, then in a team of four. You'll choose your own problem both times. And LLMs are part of the class in two roles, as a coding tool and as a component inside the apps you build.</p>
+    <p>New this term: a much better platform, which works with any coding harness, so use whichever AI coding tool you like. There's more on user experience, including how to run a real user test, and more on usability, ethics and AI. And the assignments are less prescriptive. Instead of long checklists, you'll get a few skills per assignment, each with a rubric, and be graded on competency.</p>
+  </div>
+  <details class="aside" data-kind="you">
+    <summary><span class="tag">For you</span><span class="tease">"Works with any coding harness" includes this</span></summary>
+    <div class="body">
+      <p>Claude Code is one of those harnesses. If you do build the personal project, the course's platform should work with it directly. We'll look at <a href="https://github.com/mit-sdg/syncpress">syncpress</a> properly when the "Client server apps" and "Context &amp; AI coding" lectures arrive.</p>
+    </div>
+  </details>
+  <details class="aside" data-kind="source">
+    <summary><span class="tag">Source</span><span class="tease">How competency grading works here</span></summary>
+    <div class="body">
+      <p>From the guide: each skill is marked <em>Deficient</em>, <em>Emergent</em>, <em>Competent</em> or <em>Expert</em>, roughly C to A. <em>Expert</em> is reserved for "insight and creativity that distinguishes an expert from a routine practitioner." The rubrics are public, and the guide suggests giving them to an LLM as context and asking for a critique before you submit. That's a good use for me if you do any assignment.</p>
+      <p>This is a version of what education researchers call specifications grading (Linda Nilson's 2014 book is the usual reference).</p>
+    </div>
+  </details>
+</article>
+
+<!-- 14 -->
+<article class="slide" data-page="14" data-title="MIT AI & education report">
+  <div class="narration">
+    <p>This came out just a few weeks ago. MIT set up a committee last January on AI in teaching and learning, and this is its report. We'd encourage you to read at least the principles. It will shape how many of your classes handle AI, and it lines up closely with how we've set up this one: we want you to use AI a lot, and we want you to stay in charge of your own thinking.</p>
+  </div>
+  <details class="aside" data-kind="source">
+    <summary><span class="tag">Source</span><span class="tease">What the report actually says (I read it)</span></summary>
+    <div class="body">
+      <p><a href="https://aiandeducation.mit.edu/report/">The report</a>, dated August 13, 2026, sets out eight guiding principles. The one closest to this class is <em>augmentation, not automation</em>. It warns about "cognitive surrender", where students hand a problem to AI at the first sign of struggle, and asks for AI in education to be "pro-learner".</p>
+      <p>A few recommendations stand out. Every course should state its AI policy <em>with a rationale</em>, and this class's guide does. The report favours project-based and in-person learning. It recommends against relying on AI detectors. And it asks instructors to be open with students when content is substantially AI-generated.</p>
+    </div>
+  </details>
+  <details class="aside" data-kind="you">
+    <summary><span class="tag">For you</span><span class="tease">In that spirit: a disclosure</span></summary>
+    <div class="body"><p>Everything on this site outside the slides was written by Claude. Treat it as a well-read study partner's take, not as the lecturers' words. When something seems off, check it against the slides or the <a href="https://essenceofsoftware.com">primary sources</a>, and tell me.</p></div>
+  </details>
+</article>
+
+<!-- 15 -->
+<article class="slide" data-page="15" data-title="this week's activities">
+  <div class="narration">
+    <p>Finally, what you need to do this week.</p>
+  </div>
+</article>
+
+<!-- 16 -->
+<article class="slide" data-page="16" data-title="this week's activities (list)">
+  <div class="narration">
+    <p>It's a busy first week, so here's the order. By recitation tomorrow, do the prep: set up a GitHub repo and practise some Markdown. Come to recitation. Pick a time that suits you, and you can switch later. You'll get an email tomorrow inviting you to the class forum. Read the class guide this weekend. We won't spend class time on logistics, and it also explains <em>why</em> the class works the way it does.</p>
+    <p>Most important, your first assignment is due Monday at midnight: problem framing. Start early. The hard part isn't the writing. It's letting an idea for a problem sit in your head for a few days until you can tell whether it's real.</p>
+  </div>
+  <details class="aside" data-kind="you">
+    <summary><span class="tag">For you</span><span class="tease">Your version of this list</span></summary>
+    <div class="body">
+      <ul>
+        <li><strong>Prep 1 (repo + Markdown):</strong> effectively done. This repo is your repo.</li>
+        <li><strong>Recitation:</strong> I'll make a short page for each recitation. You'll probably skim the early ones.</li>
+        <li><strong>Forum:</strong> enrolled students only, so bring questions to me instead.</li>
+        <li><strong>Class guide:</strong> worth the 20 minutes. <a href="https://61040.github.io/fa26/guide/">Read it here</a>. The "Using AI" section is the best short statement I've seen on using an LLM without letting it do your thinking.</li>
+        <li><strong>E1, problem framing:</strong> I'll turn it into an exercise page. Even if you never build the project, framing a bad situation well is the skill the next lecture teaches.</li>
+      </ul>
+    </div>
+  </details>
+</article>
+
+<!-- 17 -->
+<article class="slide" data-page="17" data-title="a word of advice">
+  <div class="narration">
+    <p>One last thing. Use this class as a chance to learn for yourself and not for your grade. The asterisk is there because we know grades still exist. But the rubrics, the reflections and the choose-your-own projects are all set up so that doing it properly and doing well come to the same thing.</p>
+    <p>See you on the other side of the break, when we'll talk about how to innovate.</p>
+  </div>
+  <details class="aside" data-kind="you">
+    <summary><span class="tag">For you</span><span class="tease">You have no grade at all</span></summary>
+    <div class="body"><p>That's the best case for this advice. Nothing to optimise but understanding. The failure mode for a listener is the opposite of a student's: it's easy to read everything and do nothing. If you want one habit from this class, it's to attempt the thing before reading the answer. The self-check below is a small start.</p></div>
+  </details>
+</article>
+
+<section>
+  <h2>Check yourself</h2>
+  <p class="meta">Try answering in your head, or in the note box at the bottom, before opening each answer.</p>
+
+  <div class="check">
+    <p class="q">1. The course has two premises. How does the second one change the importance of the first?</p>
+    <details><summary>Show answer</summary>
+      <p>"Design is learnable" and "AI changes everything". If AI makes building cheap, the remaining limit on what you can make is design quality, so the skill the first premise says you can learn becomes the most valuable one.</p>
+    </details>
+  </div>
+
+  <div class="check">
+    <p class="q">2. A friend builds a to-do app by prompting an AI tool, doesn't read the code, and it mostly works. Which of the "isn't" classes is that, and what goes wrong later?</p>
+    <details><summary>Show answer</summary>
+      <p>Vibe coding. The trouble comes when they need to change it, extend it, or diagnose a bug, because nobody holds a model of how it works. The course's alternative is to design the functionality explicitly (as concepts) so both you and the AI work from a structure you understand.</p>
+    </details>
+  </div>
+
+  <div class="check">
+    <p class="q">3. Give an example of a design decision that is about functionality and not about the UI.</p>
+    <details><summary>Show answer</summary>
+      <p>For example, organising email by labels (a message can have many) versus folders (a message lives in one place). The decision changes what users can do and what they have to understand, whatever the screens look like. Other examples: whether a shared doc's "delete" removes it for everyone, or whether an invitation needs acceptance.</p>
+    </details>
+  </div>
+
+  <div class="check">
+    <p class="q">4. Using Brooks's distinction, what does AI coding mostly remove, and what does it leave?</p>
+    <details><summary>Show answer</summary>
+      <p>It mostly removes <em>accidental</em> complexity: syntax, boilerplate, framework plumbing. It leaves <em>essential</em> complexity: deciding what the system should do and how its parts relate. That leftover is what this class calls design.</p>
+    </details>
+  </div>
+
+  <div class="check">
+    <p class="q">5. Why do you think the lecturers ask for reflections in every assignment, and why does the guide say never to hand them to an LLM?</p>
+    <details><summary>Show answer</summary>
+      <p>The first premise says design skill comes from practice <em>plus reflection</em> (Schön). A reflection's value lies in doing it, the metacognition, not in the text it produces. An LLM-written reflection gives you the text without the learning, and the guide adds that it reads "flat and colorless".</p>
+    </details>
+  </div>
+
+  <h2>Your thoughts</h2>
+  <div id="general-note"></div>
+
+  <nav class="nextprev">
+    <a href="../"><small>Back to</small>Course home</a>
+    <span class="next"><small>Next · coming soon</small>How to innovate</span>
+  </nav>
+</section>
+
+<footer class="site">
+  Slides © MIT 6.1040 staff, loaded from <a href="https://61040.github.io/fa26/">61040.github.io</a> and not copied here. Narration and notes written by Claude for personal study; not affiliated with MIT.
+</footer>
+</main>
+
+<script type="module" src="../assets/lecture.js"></script>
+</body>
+</html>

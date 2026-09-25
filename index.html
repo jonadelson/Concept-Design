@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Concept Design Companion</title>
+<meta name="description" content="A narrated, self-paced companion to MIT 6.1040 Software Design, Fall 2026.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alegreya:wght@700&family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+<style>body { padding-bottom: 24px; }</style>
+</head>
+<body>
+<main class="wrap">
+<header class="hero">
+  <p class="kicker">Following MIT 6.1040 · Fall 2026</p>
+  <h1>Software Design, narrated</h1>
+  <p class="lede">Each lecture's slides, with a narrative of what the lecturer is getting at, margin notes on sources, industry, and debates, and a few questions to check yourself.</p>
+  <p class="meta">Course site: <a href="https://61040.github.io/fa26/">61040.github.io/fa26</a> · <a href="https://61040.github.io/fa26/schedule/">official schedule</a> · <a href="https://61040.github.io/fa26/guide/">class guide</a></p>
+</header>
+
+<div id="schedule"></div>
+
+<footer class="site">
+  Slides © MIT 6.1040 staff, embedded live from the course website. Narration by Claude for personal study; not affiliated with MIT.
+</footer>
+</main>
+
+<script>
+// status: "ready" links to a page; anything else shows as coming.
+// kind: lecture | recitation | assignment
+const SCHEDULE = [
+  { week: "Week 1", items: [
+    { date: "Sep 9",  kind: "lecture", title: "Welcome", href: "lectures/welcome.html", status: "ready" },
+    { date: "Sep 9",  kind: "lecture", title: "How to innovate" },
+    { date: "Sep 10", kind: "recitation", title: "Markdown" },
+  ]},
+  { week: "Week 2", items: [
+    { date: "Sep 14", kind: "lecture", title: "Intro to concept design" },
+    { date: "Sep 14", kind: "assignment", title: "E1 · Problem framing & personal goals" },
+    { date: "Sep 16", kind: "lecture", title: "Designing a concept" },
+    { date: "Sep 17", kind: "recitation", title: "HTML, CSS" },
+  ]},
+  { week: "Week 3", items: [
+    { date: "Sep 21", kind: "lecture", title: "Designing coordination" },
+    { date: "Sep 21", kind: "assignment", title: "E2 · Understanding concepts" },
+    { date: "Sep 23", kind: "lecture", title: "Modularity" },
+    { date: "Sep 24", kind: "recitation", title: "HTTP and REST" },
+  ]},
+  { week: "Week 4", items: [
+    { date: "Sep 28", kind: "lecture", title: "Designing reactions" },
+    { date: "Sep 28", kind: "assignment", title: "E3 · Understanding composition" },
+    { date: "Sep 30", kind: "lecture", title: "Designing modular systems" },
+    { date: "Oct 1",  kind: "recitation", title: "Mongo" },
+  ]},
+  { week: "Week 5", items: [
+    { date: "Oct 5",  kind: "lecture", title: "Client server apps" },
+    { date: "Oct 7",  kind: "lecture", title: "Context & AI coding" },
+    { date: "Oct 8",  kind: "recitation", title: "Vue" },
+  ]},
+  { week: "Week 6", items: [
+    { date: "Oct 13", kind: "lecture", title: "Interaction design" },
+    { date: "Oct 14", kind: "lecture", title: "Visual design" },
+    { date: "Oct 15", kind: "recitation", title: "Cookies and sessions" },
+  ]},
+  { week: "Week 7", items: [
+    { date: "Oct 19", kind: "lecture", title: "Engaging users: problem, design" },
+    { date: "Oct 21", kind: "lecture", title: "Engaging users: evaluation, signals" },
+    { date: "Oct 22", kind: "recitation", title: "LLM APIs, MCP" },
+  ]},
+  { week: "Week 8", items: [
+    { date: "Oct 26", kind: "lecture", title: "Value-sensitive design" },
+    { date: "Oct 28", kind: "lecture", title: "Designing agentic features" },
+    { date: "Oct 29", kind: "recitation", title: "Injection attacks (SQL, prompt)" },
+  ]},
+  { week: "Week 9", items: [
+    { date: "Nov 2",  kind: "lecture", title: "Designing AI-powered features" },
+    { date: "Nov 5",  kind: "recitation", title: "GitHub" },
+  ]},
+  { week: "Weeks 10–14", items: [
+    { date: "Nov 18", kind: "lecture", title: "Security" },
+    { date: "Nov 23", kind: "lecture", title: "Data privacy" },
+    { date: "Nov 25", kind: "lecture", title: "Agentic risk" },
+  ]},
+];
+
+const root = document.getElementById("schedule");
+for (const w of SCHEDULE) {
+  const sec = document.createElement("section");
+  sec.className = "week";
+  sec.innerHTML = `<h3>${w.week}</h3>`;
+  for (const it of w.items) {
+    const ready = it.status === "ready";
+    const el = document.createElement(ready ? "a" : "div");
+    el.className = `item ${ready ? "ready" : "soon"}`;
+    if (ready) el.href = it.href;
+    el.innerHTML = `<span class="date">${it.date}</span>
+      <span class="title">${it.title}<br><span class="kind">${it.kind}</span></span>
+      <span class="pill">${ready ? "Read" : "Soon"}</span>`;
+    sec.append(el);
+  }
+  root.append(sec);
+}
+</script>
+</body>
+</html>
