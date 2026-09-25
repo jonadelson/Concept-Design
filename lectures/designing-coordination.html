@@ -1,0 +1,795 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Designing coordination · 6.1040</title>
+<meta name="description" content="Narrated companion to the 6.1040 lecture on designing coordination between people, machines and LLM agents (MIT, Fall 2026).">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alegreya:wght@700&family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+</head>
+<body data-lecture="designing-coordination" data-pdf="https://61040.github.io/fa26/lectures/designing-coordination.pdf">
+
+<nav class="topbar"><div class="wrap">
+  <a href="../">← Course</a>
+  <span class="crumb">Lecture 4 · Designing coordination</span>
+</div><div class="progress"></div></nav>
+
+<main class="wrap">
+<header class="hero">
+  <p class="kicker">Lecture 4 · Mon Sep 21</p>
+  <h1>Designing coordination</h1>
+  <p class="lede">How people, machines and LLM agents work together. One small story (Maya inviting Ada to a refunds review) is built up step by step: concepts that hold state, actions that change it, reactions that connect concepts, and finally agents that take over some of the interpretive work people were doing by hand.</p>
+  <p class="meta">65 slides · about 80 minutes of class time · <a href="https://61040.github.io/fa26/lectures/designing-coordination.pdf">original PDF</a></p>
+
+  <details class="howto">
+    <summary>How to read this page</summary>
+    <ul>
+      <li>Each slide is loaded live from the course website, and below it is what the lecturer might plausibly have said. <strong>The narration is my reconstruction, not a transcript.</strong> The deck doesn't say which of the three lecturers gave this one, so the "I" here is just the lecturer.</li>
+      <li>Many slides are builds of the same diagram. For those, the narration says what changed and moves on.</li>
+      <li>The coloured boxes are margin notes. Tap to open.
+        <span style="color:var(--source)">Source</span> points to where an idea comes from,
+        <span style="color:var(--industry)">In practice</span> connects it to industry,
+        <span style="color:var(--debate)">Debate</span> covers where it's contested, and
+        <span style="color:var(--you)">For you</span> is about following along as a listener.</li>
+      <li>Tap a slide to see it full screen. Use <em>＋ Add a note</em> on any slide. Notes are saved on this device only. <em>Copy notes for chat</em> collects them so you can paste them to Claude.</li>
+    </ul>
+  </details>
+</header>
+
+<!-- 1 -->
+<article class="slide" data-page="1" data-title="designing coordination">
+  <div class="narration">
+    <p>Last time we designed a single concept on its own. Today is about what happens when several parties have to work together to get something done. Some of those parties are people, some are ordinary software, and some are LLM agents. I want to show you that one small vocabulary covers all three.</p>
+  </div>
+  <details class="aside" data-kind="source">
+    <summary><span class="tag">Source</span><span class="tease">The paper behind this lecture</span></summary>
+    <div class="body">
+      <p>The machinery you'll see today (concepts that know nothing of each other, connected by <em>when / where / then</em> rules) comes from Eagon Meng and Daniel Jackson, <a href="https://arxiv.org/abs/2508.14511"><em>What You See Is What It Does: A Structural Pattern for Legible Software</em></a>, presented at Onward! 2025. The paper calls the rules <em>synchronizations</em>. This lecture calls them <em>reactions</em>, which is also the word E3 uses.</p>
+      <p>The paper is about code: it defines a small language for synchronizations and rebuilds the RealWorld benchmark app (a Medium clone) with it. The lecture is about design, and extends the idea in a direction the paper doesn't take, by treating people and LLM agents as actors who run reactions too.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 2 -->
+<article class="slide" data-page="2" data-title="inviting Ada to the review">
+  <div class="narration">
+    <p>Here's the example we'll live with for the whole hour. Maya is organizing Thursday's refunds review. She wants Ada, the payments lead, to be there.</p>
+    <p>Look at who does what. Maya invites. A machine delivers the notification. Ada decides whether to come. Three actors of different kinds, and the thing only works if each of them does their part. Nobody would call this a hard problem. But by the end we'll have built it out into something with five concepts and two LLM agents, and the question at every step will be the same: who knows what, and who is allowed to do what.</p>
+  </div>
+</article>
+
+<!-- 3 -->
+<article class="slide" data-page="3" data-title="Part 1: state and actions">
+  <div class="narration">
+    <p>We start with the smallest piece: one concept, its state and its actions.</p>
+  </div>
+</article>
+
+<!-- 4 -->
+<article class="slide" data-page="4" data-title="Inviting [Engagement, Guest]">
+  <div class="narration">
+    <p>This is the Inviting concept, written in the form you've seen: purpose, principle, state, actions.</p>
+    <p>The purpose is <em>mutual consent to participate in an engagement</em>. Notice the second sentence, what it <strong>prevents</strong>: someone being counted in without agreeing, or turning up uninvited. Both failure modes matter. An invitation protects the guest (you can't be signed up against your will) and the host (people can't just show up).</p>
+    <p>The principle is the story in one line: Maya invites Ada, Ada accepts, and she's counted in.</p>
+    <p>The state is a set of invitations. Each one has an engagement, an invited guest, an expiry date, and a status that's one of PENDING, ACCEPTED, DECLINED or EXPIRED. The actions are invite, which creates an invitation and returns it, then accept, decline and expire.</p>
+    <p>The two type parameters in brackets, Engagement and Guest, matter. Inviting doesn't know what a review is, or what a person is. An engagement could be a meeting, a party, a shared document. That's what lets us reuse it.</p>
+  </div>
+  <details class="aside" data-kind="industry">
+    <summary><span class="tag">In practice</span><span class="tease">This is a state machine with a table behind it</span></summary>
+    <div class="body">
+      <p>If you've built invitations before, you've built this: an <code>invitations</code> table with a <code>status</code> enum and a few endpoints that move rows between states. What the concept form adds is the purpose and principle up front, and the discipline that the concept owns nothing else. There's no <code>users</code> table in here, no email template, no calendar. Engagement and Guest are opaque IDs, the way E2 asks you to treat Item in GiftRegistering.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 5 -->
+<article class="slide" data-page="5" data-title="Maya requests an invitation">
+  <div class="narration">
+    <p>Now let's run it. Maya calls invite. The Inviting box is empty: nothing has happened yet.</p>
+  </div>
+</article>
+
+<!-- 6 -->
+<article class="slide" data-page="6" data-title="an invitation becomes a record">
+  <div class="narration">
+    <p>And now there's a record. Engagement: the review. Invited: Ada. Expiry: Wednesday. Status: PENDING.</p>
+    <p>The line at the bottom is the point of this slide. <strong>The record remains after Maya's action finishes.</strong> Maya's request was a moment. The invitation is a thing that persists, and the rest of the story happens because it's still there. Anyone who comes later, Ada or a machine, can find it and act on it.</p>
+  </div>
+  <details class="aside" data-kind="industry">
+    <summary><span class="tag">In practice</span><span class="tease">Why "a record" and not "a message"</span></summary>
+    <div class="body">
+      <p>A lot of coordination bugs in real systems come from treating a request as a message that's handled once and forgotten. If the invitation were only a notification sent to Ada, there'd be nowhere to record her answer and nothing for a timeout to act on. Workflow engines (Temporal, AWS Step Functions, Camunda) exist largely to give long-running interactions a durable place to live. Here the concept's state plays that role, and it's scoped to one purpose.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 7 -->
+<article class="slide" data-page="7" data-title="Ada requests acceptance">
+  <div class="narration">
+    <p>Some time later, Ada calls accept on that invitation. Maya's earlier invite is greyed out. It already happened, and the record is still PENDING at this instant.</p>
+  </div>
+  <details class="aside" data-kind="debate">
+    <summary><span class="tag">Debate</span><span class="tease">What stops Sam accepting on Ada's behalf?</span></summary>
+    <div class="body">
+      <p>Look back at the signature: <code>accept(invitation)</code>. It doesn't say who is accepting. As written, the concept would let anyone who can name the invitation accept it.</p>
+      <p>In the Meng and Jackson design that's deliberate. Checking that the requester is the invited guest belongs in a reaction that sits between the user's request and the action, using an authentication concept. That keeps Inviting simple and reusable. The cost is that an important rule about invitations lives outside the Inviting concept, and you have to go looking for it. Whether that's the right split is a fair question, and E2's PasswordAuthenticating exercise will make you think about the other side of it.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 8 -->
+<article class="slide" data-page="8" data-title="Ada changes the invitation">
+  <div class="narration">
+    <p>The status flips to ACCEPTED. Ada has changed a record that Maya created. Two people acted at different times through the same piece of state, and neither needed to talk to the other directly.</p>
+  </div>
+</article>
+
+<!-- 9 -->
+<article class="slide" data-page="9" data-title="1 · What if Ada does not reply?">
+  <div class="narration">
+    <p>Now the first of six lessons, and it starts with a question. Go back to PENDING. Maya invited on Monday with a Wednesday deadline. Suppose Ada never answers.</p>
+    <p>There's an expire action in the concept. So: who calls expire? Not Maya, and certainly not Ada. Nobody is going to sit at their desk on Wednesday night pressing a button.</p>
+  </div>
+</article>
+
+<!-- 10 -->
+<article class="slide" data-page="10" data-title="the machine calls expire">
+  <div class="narration">
+    <p>The machine does. When Wednesday passes, software calls expire, and Inviting moves the record to EXPIRED. The concept doesn't care who called. The action is the same whether a person or a timer asked for it.</p>
+    <p>Which raises the next question. Can Ada still accept?</p>
+  </div>
+  <details class="aside" data-kind="industry">
+    <summary><span class="tag">In practice</span><span class="tease">Timers are actors too</span></summary>
+    <div class="body">
+      <p>In production this is a cron job, a scheduled task, a delayed message on a queue, or a database TTL. The design point is that the timer shouldn't reach into the table and set <code>status = 'EXPIRED'</code> itself. It should call the same named action a person would, so the rules for what expiry means live in one place.</p>
+      <p>E3 has a separate <em>Expiring</em> concept whose <code>expireResource</code> action fires "where expiry for some resource is in the past". That's another way to split it: one generic concept tracks deadlines, and a reaction connects it to Inviting.expire.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 11 -->
+<article class="slide" data-page="11" data-title="a later accept is refused">
+  <div class="narration">
+    <p>No. A later accept is refused, because accept is allowed only while the status is PENDING. That precondition is part of the concept's definition, and it's what makes the deadline mean something.</p>
+    <p>So here's lesson one, in my words: <strong>a concept keeps state and governs it</strong>. It remembers what happened, and it decides which actions are allowed next. Neither Maya nor the machine nor Ada has to know the rules. They make requests, and the concept says yes or no.</p>
+  </div>
+  <details class="aside" data-kind="debate">
+    <summary><span class="tag">Debate</span><span class="tease">What if accept and expire arrive at the same moment?</span></summary>
+    <div class="body">
+      <p>Ada taps accept at 23:59:59 and the timer fires at midnight. Which wins depends on which reaches the concept first. At the design level the guard settles it: whichever action runs first changes the status, and the other is refused. In an implementation, you need that check-and-set to be atomic (a conditional update, or a row lock), or you can end up with both.</p>
+      <p>The paper claims its approach avoids the need for transactions <em>between</em> concepts. It doesn't claim you can skip them <em>inside</em> one.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 12 -->
+<article class="slide" data-page="12" data-title="2 · Actions carry shared meaning">
+  <div class="narration">
+    <p>Lesson two. Here's Maya saying it in English: "I invited Ada to the review, with a reply due by Wednesday." And here's the same thing as an action: <code>Inviting.invite(the review, Ada, Wednesday)</code>.</p>
+    <p>Each word in her sentence has a slot. The engagement, the guest, the expiry. What does this action tell the machine? Everything it needs, and in a form that a person can also read. The action is the unit that both sides understand. When Maya reads a log of actions she sees her own intent. When the machine gets the action it knows exactly what state to create.</p>
+    <p>This is why we name actions carefully. <code>invite</code> means something to Maya. <code>insertRow</code> wouldn't.</p>
+  </div>
+  <details class="aside" data-kind="industry">
+    <summary><span class="tag">In practice</span><span class="tease">Commands and domain events</span></summary>
+    <div class="body">
+      <p>This is the same instinct as domain-driven design's "ubiquitous language" and as event sourcing's habit of recording <code>InvitationSent</code> rather than a diff of columns. An action log you can read as a story ("Maya invited Ada; Ada accepted") is far easier to debug than a sequence of generic updates. The paper's word for this property is <em>legibility</em>: you can see what happened at runtime in terms of the design.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 13 -->
+<article class="slide" data-page="13" data-title="people and software act through the same concept">
+  <div class="narration">
+    <p>Here's Part 1 in one picture. Maya's invite creates Ada's invitation in PENDING. From there, two paths. If Ada chooses to accept before the deadline, it goes to ACCEPTED. If Wednesday arrives without a reply, the machine calls expire and it goes to EXPIRED. Only one of those can happen.</p>
+    <p>Inviting keeps the request and the guest's answer together. A person acts on one path, software on the other, and the concept is where they meet.</p>
+  </div>
+  <details class="aside" data-kind="you">
+    <summary><span class="tag">For you</span><span class="tease">Draw this for a coordination at your work</span></summary>
+    <div class="body">
+      <p>Pick something where one person asks and another answers, with a machine in the loop: a code review request, an access request, a PTO approval. Write the concept (state and actions) and draw the diagram: who creates the record, who can move it, and what software does when nobody acts.</p>
+      <p>Put it in the note box and paste it to me. The interesting part is usually the case nobody designed for, like the reviewer who never responds.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 14 -->
+<article class="slide" data-page="14" data-title="Part 2: reactions and reads">
+  <div class="narration">
+    <p>So far, one concept. Now, how do concepts connect to each other, and what can they see of each other?</p>
+  </div>
+</article>
+
+<!-- 15 -->
+<article class="slide" data-page="15" data-title="how does an invitation lead to a message?">
+  <div class="narration">
+    <p>I skipped something. Ada somehow found out she'd been invited. When Maya does <code>Inviting.invite</code>, something has to happen next: the machine should send Ada the invitation through her registered channel. That's <code>Notifying.notify</code>, an action of a different concept. How do we get from one to the other?</p>
+  </div>
+</article>
+
+<!-- 16 -->
+<article class="slide" data-page="16" data-title="Notifying [Person]">
+  <div class="narration">
+    <p>First, the other concept. Notifying's purpose is to get a message to a person through the channel they registered. It prevents two things: a message going to a channel the person never checks, and nobody knowing how to reach them.</p>
+    <p>Principle: Ada registers her phone, and a notification for Ada goes to her phone. The state is a set of persons, each with a channel, and a set of notifications, each with a person and a message. The actions are register and notify.</p>
+    <p>Notice what Notifying doesn't know. It has never heard of invitations. And Inviting has never heard of phones. Neither concept refers to the other.</p>
+  </div>
+</article>
+
+<!-- 17 -->
+<article class="slide" data-page="17" data-title="a machine reaction">
+  <div class="narration">
+    <p>So we connect them from outside, with a reaction. It has three parts.</p>
+    <p><strong>when</strong> Inviting.invite happens,<br><strong>where</strong> Ada has a registered channel,<br><strong>then</strong> Notifying.notify(Ada, message).</p>
+    <p>The <em>when</em> is an action that just occurred. The <em>where</em> is a condition checked by reading state, and reading doesn't change anything. The <em>then</em> is the action to request. The reaction is the only place in the design that knows these two concepts go together.</p>
+  </div>
+  <details class="aside" data-kind="source">
+    <summary><span class="tag">Source</span><span class="tease">when / where / then, and a notation clash with E3</span></summary>
+    <div class="body">
+      <p>In Meng and Jackson's paper, a synchronization has exactly this form: <em>when</em> matches completed actions, <em>where</em> is a query over concept state, <em>then</em> lists actions to invoke. Their summary is "when these actions happen, where the current state of things are so, then these actions should follow."</p>
+      <p>Watch out if you do E3. Its reactions use <strong>where</strong> for the triggering action completions and <strong>then</strong> for the invocations, with no separate <em>when</em>. Same idea, different keywords. When in doubt, the rule the assignment states holds: things you match on are completions, things you request are invocations.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 18 -->
+<article class="slide" data-page="18" data-title="Ada's reaction includes her judgment">
+  <div class="narration">
+    <p>Now a move that might seem odd. Let's describe what Ada does in the same form.</p>
+    <p><strong>when</strong> Notifying.notify: Ada receives the invitation.<br><strong>where</strong> she looks at the invitation (the review, reply by Wednesday) and asks herself, "Can I make this review?"<br><strong>then</strong> accept or decline.</p>
+    <p>The shape is the same as the machine's reaction. The difference is in the <em>where</em>. The machine checked a fact in a table. Ada exercises judgment, using the invitation plus things that live only in her head.</p>
+  </div>
+  <details class="aside" data-kind="debate">
+    <summary><span class="tag">Debate</span><span class="tease">Is a person really "running a reaction"?</span></summary>
+    <div class="body">
+      <p>As a modelling device, it's useful: it forces you to say what a person needs to see before they can act, and which actions their decision leads to. That's most of what a designer needs.</p>
+      <p>But people don't wait politely for triggers. Ada might accept before the notification arrives because Maya mentioned it at lunch, or ignore it for reasons no record captures. The model describes the designed path. Keep in mind that it says nothing about the unplanned ones.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 19 -->
+<article class="slide" data-page="19" data-title="Ada chooses to accept">
+  <div class="narration">
+    <p>And in this run, Ada chooses to accept.</p>
+  </div>
+</article>
+
+<!-- 20 -->
+<article class="slide" data-page="20" data-title="3 · Reactions connect through actions">
+  <div class="narration">
+    <p>Lesson three. Chain them together. Maya, using her judgment, does invite. That triggers the machine's reaction: the channel is registered, so notify. That triggers Ada: she weighs the invitation against her availability, and does accept.</p>
+    <p>Each link in this chain is an action. No actor calls another directly. Maya doesn't call the notification system, and the notification system doesn't call Ada. An action happens, and whoever is watching for it reacts. That's why we can put people and machines in the same chain without special cases.</p>
+  </div>
+  <details class="aside" data-kind="industry">
+    <summary><span class="tag">In practice</span><span class="tease">Choreography, not orchestration</span></summary>
+    <div class="body">
+      <p>In microservice terms this is <em>choreography</em>: services emit events and others subscribe, with no central coordinator. The usual complaint about choreography is that the overall flow becomes invisible, because it's spread across many subscribers.</p>
+      <p>The concept-design answer is to make the reactions first-class and small, and to put them in one place, separate from the concepts. The paper traces the idea back to Sullivan and Notkin's "mediators" (1992), which also kept components ignorant of each other and put the wiring in separate units. The difference the paper points out is that concepts have only actions, which serve as both the API and the events.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 21 -->
+<article class="slide" data-page="21" data-title="the where clause reads concept state">
+  <div class="narration">
+    <p>Let's look closer at that <em>where</em>. Earlier, Ada registered her phone, so Notifying has a record: person Ada, channel phone. When the machine's reaction checks "Ada has a registered channel", it reads that record. It doesn't change it.</p>
+    <p>This matters for a simple reason. Reactions are allowed to look at any concept's state, but the only way to change state is through an action. Reads are free. Writes go through the front door.</p>
+  </div>
+</article>
+
+<!-- 22 -->
+<article class="slide" data-page="22" data-title="4 · People read state through a view">
+  <div class="narration">
+    <p>Lesson four. People read state too, but not as a table. Ada sees a view: a card that says "The review. Please reply by Wednesday." Behind that card is the Inviting record. Her <em>where</em> is the invitation plus her availability.</p>
+    <p>So the view is the person's version of the <em>where</em> clause. When you design a screen, you're deciding what state someone gets to read before they act. If the card had left off the deadline, Ada's judgment would be working with less than it needs.</p>
+  </div>
+  <details class="aside" data-kind="industry">
+    <summary><span class="tag">In practice</span><span class="tease">Views as read models</span></summary>
+    <div class="body">
+      <p>If you've used CQRS, this will look familiar: writes go through commands (actions), and reads come from projections shaped for a particular consumer. The lecture's version is less about performance and more about the question "what does this actor need to know to decide?" That question applies equally to a screen for Ada, a query for a machine, and, later today, the context you hand an LLM.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 23 -->
+<article class="slide" data-page="23" data-title="reactions connect actions and read state">
+  <div class="narration">
+    <p>Here's Part 2 as one table. Three actors, each with a when, a where and a then.</p>
+    <p>Maya: when the team needs a review, where her judgment says so, then Inviting.invite. The machine: when Inviting.invite, where Ada has a registered channel, then Notifying.notify. Ada: when Notifying.notify, where the invitation and her availability allow it, then Inviting.accept.</p>
+    <p>The dashed lines on the right show the reads. The machine reads Notifying (Ada, phone). Ada reads Inviting (Ada, Wednesday). Actions flow down the middle, and reads reach out to the side. That's the whole structure, and we won't need anything else for the rest of the lecture.</p>
+  </div>
+</article>
+
+<!-- 24 -->
+<article class="slide" data-page="24" data-title="Part 3: delegating work">
+  <div class="narration">
+    <p>Now a harder question. Given this structure, which work should people do, and which should we hand to software?</p>
+  </div>
+</article>
+
+<!-- 25 -->
+<article class="slide" data-page="25" data-title="Man-Computer Symbiosis">
+  <div class="narration">
+    <p>This question is old. In 1960, J. C. R. Licklider published a paper called "Man-Computer Symbiosis". He proposed a division of labour. People "will set the goals, formulate the hypotheses, determine the criteria, and perform the evaluations." Computing machines "will do the routinizable work that must be done to prepare the way for insights and decisions in technical and scientific thinking."</p>
+    <p>Keep that split in mind. Maya setting up a review is a goal. Ada deciding whether she can come is an evaluation. Delivering a notification is routine.</p>
+  </div>
+  <details class="aside" data-kind="source">
+    <summary><span class="tag">Source</span><span class="tease">Licklider's paper is short and free to read</span></summary>
+    <div class="body">
+      <p>J. C. R. Licklider, "Man-Computer Symbiosis", <em>IRE Transactions on Human Factors in Electronics</em>, HFE-1, pages 4–11, March 1960. There's a copy hosted at <a href="https://groups.csail.mit.edu/medg/people/psz/Licklider.html">MIT CSAIL</a>. I checked both quotes on the slide against it, and they match the abstract word for word.</p>
+      <p>Licklider went on to fund much of the early research that led to interactive computing and the ARPANET. The paper reads as surprisingly current. He expected an interim period where people and machines work as partners, before machines might do more on their own.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 26 -->
+<article class="slide" data-page="26" data-title="preparing to think">
+  <div class="narration">
+    <p>What convinced Licklider was a small study of himself. In 1957 he kept track of how he spent the hours he regarded as thinking time. He found that about 85% of it went into getting into a position to think.</p>
+    <p>His example: he had to compare several speech-intelligibility experiments. The researchers had each measured things differently, so it took hours to put the results in comparable form. After that, it took seconds to see the answer.</p>
+    <p>Hold on to that ratio. A lot of what looks like coordination work in our example is the same kind of preparation: finding out who should be there, keeping track of who's doing what. The decision at the end is quick. Getting to it is slow.</p>
+  </div>
+  <details class="aside" data-kind="source">
+    <summary><span class="tag">Source</span><span class="tease">The passage in his own words</span></summary>
+    <div class="body">
+      <p>"About 85 per cent of my 'thinking' time was spent getting into a position to think, to make a decision, to learn something I needed to know. … At one point, it was necessary to compare six experimental determinations of a function relating speech-intelligibility to speech-to-noise ratio. No two experimenters had used the same definition or measure of speech-to-noise ratio. Several hours of calculating were required to get the data into comparable form. When they were in comparable form, it took only a few seconds to determine what I needed to know."</p>
+      <p>He says he tracked himself "in the spring and summer of 1957", and is candid that it was informal and covered one person.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 27 -->
+<article class="slide" data-page="27" data-title="Maya organizes a refunds review">
+  <div class="narration">
+    <p>Back to Maya. Let's rewind to before the invitation. She's planning Thursday's review, and her description is "We need to discuss returning customers' money." She identifies the concern: refunds.</p>
+    <p>Up to now I just told you she wanted Ada. But in a real team Maya has to work that out. Who is responsible for refunds?</p>
+  </div>
+</article>
+
+<!-- 28 -->
+<article class="slide" data-page="28" data-title="Convening [Concern]">
+  <div class="narration">
+    <p>First we need the review itself to be a record. That's the Convening concept. Its purpose is to set up an occasion and establish what it's about. It prevents people arriving without knowing the purpose, or arriving for something that was called off.</p>
+    <p>An occasion has a title, a time, a description and a set of concerns. Actions: convene, cover (mark a concern), drop, and cancel. Principle: Maya convenes Thursday's review and marks refunds as a concern.</p>
+    <p>Notice Convening is separate from Inviting. Setting up a meeting and inviting people to it are different things with different purposes. You can have an occasion with no invitations, and you can invite people to things that aren't occasions.</p>
+  </div>
+</article>
+
+<!-- 29 -->
+<article class="slide" data-page="29" data-title="where do we find who is responsible?">
+  <div class="narration">
+    <p>So Convening has the review, with concern refunds. And the team has responsibilities: the payments lead, Ada, covers refunds. The operations lead, Sam, covers outages.</p>
+    <p>Which person should get an invitation? We know the answer by looking. The software can't, because that table of responsibilities isn't recorded anywhere. We need a record connecting responsibilities to people.</p>
+  </div>
+</article>
+
+<!-- 30 -->
+<article class="slide" data-page="30" data-title="Rostering [Concern]">
+  <div class="narration">
+    <p>That's Rostering. Its purpose: record who holds each position and what it's responsible for. It prevents responsibilities being unclear, or two people each assuming the other one has it.</p>
+    <p>A position has a title, a holder (a person, or nobody), and a set of concerns. You create a position, assign concerns to it, appoint someone, and relieve them. Principle: Maya appoints Ada as payments lead, responsible for refunds, and Sam can look her up.</p>
+    <p>The indirection through positions is deliberate. If Ada moves on, you relieve her and appoint someone else. The responsibility stays with the position.</p>
+  </div>
+</article>
+
+<!-- 31 -->
+<article class="slide" data-page="31" data-title="a concern and a subject can be the same thing">
+  <div class="narration">
+    <p>A small but important point. Convening is parameterized by Concern. Suppose Rostering had been written by someone else, who called its parameter Subject. Doesn't matter. When we put the app together, we can pass the same thing (refunds) to both. Your application might call it a Topic.</p>
+    <p>Each concept names its parameter for its own purposes. The link between them only exists at composition time, when we decide both get the same values.</p>
+  </div>
+  <details class="aside" data-kind="source">
+    <summary><span class="tag">Source</span><span class="tease">Why generic parameters keep concepts independent</span></summary>
+    <div class="body">
+      <p>This is the reason concepts take type parameters at all. If Convening's concerns were "a Topic from the Topics table", Convening would depend on whatever owns Topics. With a parameter, it only needs identities it can compare. E2's question 7 asks the same thing about GiftRegistering's Item type, and <a href="https://essenceofsoftware.com">essenceofsoftware.com</a> discusses generic concepts in more depth.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 32 -->
+<article class="slide" data-page="32" data-title="the shared concern leads to Ada">
+  <div class="narration">
+    <p>Now Maya does <code>cover(the review, refunds)</code>. Convening has the review on Thursday with concern refunds. Rostering has the payments lead held by Ada with concern refunds. Same concern.</p>
+    <p>A machine reaction reads both records, sees the match, and requests <code>Inviting.invite(the review, Ada, Wednesday)</code>. It also sets the reply deadline. Maya never typed Ada's name.</p>
+  </div>
+  <details class="aside" data-kind="debate">
+    <summary><span class="tag">Debate</span><span class="tease">Where did "Wednesday" come from?</span></summary>
+    <div class="body">
+      <p>The slide says the machine sets the deadline, and the review is Thursday, so presumably the rule is something like "reply by the day before". That's a real policy decision, and here it lives inside a reaction.</p>
+      <p>Reactions are a convenient place to hide policy, which is both their strength and their risk. If the team later wants "two days before", someone has to know that this particular reaction is where the rule lives. A reasonable habit: when a reaction computes a value instead of passing one through, write down why.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 33 -->
+<article class="slide" data-page="33" data-title="the review reaches the responsible person">
+  <div class="narration">
+    <p>The whole chain. Earlier, Maya recorded the review and the roster, and Ada registered her phone. Then: Maya does Convening.cover. The lookup reaction reads Convening and Rostering and does Inviting.invite. The notify reaction reads Notifying and does Notifying.notify. Ada reads her PENDING invitation, chooses, and does Inviting.accept.</p>
+    <p>Maya names the concern. Software handles the chain. Ada decides. That's Licklider's division, more or less.</p>
+  </div>
+</article>
+
+<!-- 34 -->
+<article class="slide" data-page="34" data-title="where might this solution fall short?">
+  <div class="narration">
+    <p>So the invitation reached Ada, and the reactions worked. Here's the question to sit with for a moment: would this always bring the right people into the room?</p>
+  </div>
+</article>
+
+<!-- 35 -->
+<article class="slide" data-page="35" data-title="Austin contributed, but holds no position">
+  <div class="narration">
+    <p>No. Meet Austin. He actually built the refunds fix. Ada is the payments lead, and she got the invitation. Austin holds no position, so nothing links him to refunds, and he got nothing.</p>
+    <p>The design isn't buggy. Every reaction did what it said. The trouble is that <strong>formal responsibility and current contribution are different facts</strong>, and we only recorded one of them.</p>
+  </div>
+  <details class="aside" data-kind="industry">
+    <summary><span class="tag">In practice</span><span class="tease">CODEOWNERS versus git blame</span></summary>
+    <div class="body">
+      <p>You've seen this gap. A CODEOWNERS file says who is responsible for a directory. <code>git log</code> says who has actually been changing it lately. On-call rotations say who gets paged, but the person who can fix the bug is often whoever touched it last week. Review-routing and incident tools that only read the formal record reproduce exactly Austin's problem.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 36 -->
+<article class="slide" data-page="36" data-title="keeping contributions visible takes work">
+  <div class="narration">
+    <p>And it's not that nobody knows. Sam saw Austin's update: "My refunds patch is merged. Ready for release." Sam understands who built the fix. But later, when Maya asks "Who contributed to refunds?", there's no shared record of Austin's contribution. It's in Sam's head and buried in a chat thread.</p>
+    <p>Who records the update? Someone has to. Each update needs interpretation, deciding what it means, and then upkeep, before someone else can look it up. That's real work, and right now nobody is assigned to do it.</p>
+  </div>
+</article>
+
+<!-- 37 -->
+<article class="slide" data-page="37" data-title="repeating the roster lookup">
+  <div class="narration">
+    <p>Could we just run the lookup again, more carefully? It reads Rostering, finds positions matching refunds, and invites their holders. Would running it again find Austin?</p>
+  </div>
+</article>
+
+<!-- 38 -->
+<article class="slide" data-page="38" data-title="the lookup only sees recorded responsibility">
+  <div class="narration">
+    <p>Of course not. It finds Ada, and only Ada. Austin's contribution is absent from this record, and no amount of cleverness in the reaction can find something that isn't there. The next design needs a record of contributions.</p>
+    <p>This is worth generalizing. When a reaction gives a wrong answer, check whether the information it needs was ever recorded before you blame the rule.</p>
+  </div>
+</article>
+
+<!-- 39 -->
+<article class="slide" data-page="39" data-title="exercise: delegation relay">
+  <div class="narration">
+    <p>Time for an exercise. How would you divide the responsibilities in this system between people and software? Talk to the people around you.</p>
+  </div>
+  <details class="aside" data-kind="you">
+    <summary><span class="tag">For you</span><span class="tease">Do the relay before looking at the next two slides</span></summary>
+    <div class="body">
+      <p>The next slide lists seven pieces of work. Before you scroll to slide 41, sort them yourself into "a person must choose", "rules can carry it out", and anything that doesn't fit either. Write your sort and your reasons in the note box and paste it to me. I'll compare it with the lecture's answer and push back where we differ.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 40 -->
+<article class="slide" data-page="40" data-title="the work in this system">
+  <div class="narration">
+    <p>Here is the work: convene the review, identify concerns, invite by roster, notify the guest, expire if pending, choose a reply, track contributions. The icons show who does each one today: Maya, Sam, Ada, or the machine.</p>
+  </div>
+</article>
+
+<!-- 41 -->
+<article class="slide" data-page="41" data-title="5 · The work we choose to delegate">
+  <div class="narration">
+    <p>Lesson five. Here's how I'd sort it, and there's a third column you might not have expected.</p>
+    <p><strong>People choose</strong>: convening the review and choosing a reply. These are goals and evaluations, and we want people to own them.</p>
+    <p><strong>Rules carry it out</strong>: invite by roster, notify the guest, expire if pending. Once the facts are recorded, these are mechanical.</p>
+    <p>In the middle, <strong>interpretation and upkeep</strong>: identifying which concerns a review is about, and tracking who's contributing. Maya and Sam do this now. It's not a big decision like accepting, and it's not mechanical like expiring. It needs someone to read loose text and turn it into a record.</p>
+    <p>Two questions come out of this. What record would preserve this work? And what actor could help interpret the updates?</p>
+  </div>
+  <details class="aside" data-kind="debate">
+    <summary><span class="tag">Debate</span><span class="tease">The middle column is where most workplace friction lives</span></summary>
+    <div class="body">
+      <p>Status reports, ticket triage, keeping the wiki current: this is the "work about work" people complain about, and it's the part automation has historically done badly, because the input is unstructured. That's exactly why it's the column LLMs are being pointed at. Whether they should be depends on how costly a wrong interpretation is, which is where the lecture goes next.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 42 -->
+<article class="slide" data-page="42" data-title="Part 4: adding agents">
+  <div class="narration">
+    <p>That brings us to agents.</p>
+  </div>
+</article>
+
+<!-- 43 -->
+<article class="slide" data-page="43" data-title="what would make Austin findable?">
+  <div class="narration">
+    <p>Before we add any agent, the first question is about state. Austin contributed to refunds and holds no roster position. What would Maya need to look up? And what kind of concept could keep that information?</p>
+  </div>
+</article>
+
+<!-- 44 -->
+<article class="slide" data-page="44" data-title="a contribution record">
+  <div class="narration">
+    <p>A contribution record: concern refunds, person Austin, contribution "working on the fix". That's the missing fact, written down.</p>
+  </div>
+</article>
+
+<!-- 45 -->
+<article class="slide" data-page="45" data-title="WorkTracking [Concern, Party]">
+  <div class="narration">
+    <p>And here's a concept to hold it. WorkTracking: keep a current record of who is working on each concern, and in what way. It prevents duplicated work and uncertainty about whom to ask.</p>
+    <p>The state has a set of followed concerns, the ones anyone is bothering to track, and a set of entries, each with a concern, a party and a role. The role is free text describing the contribution. Actions: follow a concern, note an entry, update its role, clear it.</p>
+    <p>Principle: Sam records Austin's work on refunds and updates it when the fix is built. Maya finds Austin for the review. Once the work is done, Sam clears the entry.</p>
+    <p>Why not just add contributors to Rostering? Because they have different purposes. A roster is about standing responsibility, and changes rarely. Work tracking is about what's happening this week, and has to be kept current. Mixing them would make both worse.</p>
+  </div>
+  <details class="aside" data-kind="debate">
+    <summary><span class="tag">Debate</span><span class="tease">"Party", and a free-text role</span></summary>
+    <div class="body">
+      <p>Note the parameter is Party, not Person. That leaves room for a team, or an agent, to be the one doing the work.</p>
+      <p>The role is a String, which is flexible but can't be checked. "working on it", "built the fix" and "released" are all equally valid values as far as the concept is concerned. That choice is what makes the agent's mistake on slide 54 possible. An enum of stages would have ruled some errors out, at the cost of forcing every kind of contribution into fixed boxes.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 46 -->
+<article class="slide" data-page="46" data-title="Sam records Austin's contribution">
+  <div class="narration">
+    <p>Earlier, while Austin was working on the fix, Sam called <code>note(refunds, Austin, "working on it")</code>. Refunds was already followed. That creates entry w17: concern refunds, party Austin, role "working on it". The contribution is now available for another actor to read.</p>
+  </div>
+</article>
+
+<!-- 47 -->
+<article class="slide" data-page="47" data-title="the expanded lookup finds Austin">
+  <div class="narration">
+    <p>Now we widen the lookup reaction. When <code>cover(the review, refunds)</code> happens, read both Rostering and WorkTracking, and invite each distinct person found in either record. Ada is found through the roster. Austin is found through the work entry.</p>
+    <p>No concept changed to make this happen. Inviting didn't change, and neither did Rostering. We added one concept and edited one reaction. That's the kind of increment this structure is supposed to make easy.</p>
+  </div>
+</article>
+
+<!-- 48 -->
+<article class="slide" data-page="48" data-title="keeping the work record current">
+  <div class="narration">
+    <p>But we've just moved the problem. Over the week Austin posts: "I'm looking into the failed refunds." "I think I've found the cause." "My patch is merged. Ready for release." Sam has to read each of those and decide whether the entry needs updating. That's the interpretation and upkeep from the middle column, now with a concrete record behind it.</p>
+    <p>Could an LLM help keep the description current?</p>
+  </div>
+</article>
+
+<!-- 49 -->
+<article class="slide" data-page="49" data-title="an LLM can request the same update">
+  <div class="narration">
+    <p>Here's the key design move. Either Sam or an LLM can request this update: <code>update(w17, "built the fix")</code>. Same action, same effect. The role changes; the concern and party stay the same.</p>
+    <p>We're not giving the LLM a new way into the system. We're giving it the same action a person already had. Everything we said about actions (they carry meaning, the concept governs them) still holds.</p>
+  </div>
+  <details class="aside" data-kind="industry">
+    <summary><span class="tag">In practice</span><span class="tease">Concept actions as agent tools</span></summary>
+    <div class="body">
+      <p>This is tool-calling as you'd build it with any agent framework or MCP server: the model is given a function signature and decides when to call it with what arguments. The design lesson is about which functions to expose. Handing an agent <code>update(entry, role)</code> is very different from handing it a SQL connection. The narrower the tool, the less a wrong guess can damage, and the easier it is to read what the agent did in the action log.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 50 -->
+<article class="slide" data-page="50" data-title="the tracking agent's inputs">
+  <div class="narration">
+    <p>Let's write the tracking agent as a reaction, the same shape as everything else.</p>
+    <p><strong>when</strong> <code>Discussing.post(refunds, text)</code> returns a post. Discussing is some chat or forum concept; we haven't defined it, but you can imagine it.</p>
+    <p><strong>where</strong>: this is where it gets interesting. For the machine, <em>where</em> was a query. For Ada, it was judgment. For the agent, it's "interpret the supplied facts". It gets a task, "keep Austin's work description current", and Austin's post. It has one tool available: WorkTracking.update(entry, role).</p>
+    <p>But there's a gap. Which entry should this update change? The post says nothing about w17.</p>
+  </div>
+</article>
+
+<!-- 51 -->
+<article class="slide" data-page="51" data-title="the entry is supplied with the post">
+  <div class="narration">
+    <p>So we supply it. Alongside the post, the agent's input now includes WorkTracking entry w17: concern refunds, party Austin, role "working on it". The reaction does the lookup, and the agent does the interpretation.</p>
+    <p>This is the same point as the view on Ada's card. What the agent can do well depends on what state you hand it. We don't ask it to guess the entry. We read the record and put it in front of it.</p>
+  </div>
+  <details class="aside" data-kind="industry">
+    <summary><span class="tag">In practice</span><span class="tease">This is context engineering</span></summary>
+    <div class="body">
+      <p>The alternative is to give the agent a search tool and let it find the entry itself. That sometimes works, and it adds a step where it can pick the wrong one. Deterministically fetching the relevant records and putting them in the prompt is what practitioners now call context engineering. The lecture frames it as "where supplies local context", which is a neat way to say that the <em>where</em> clause is the context-building step.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 52 -->
+<article class="slide" data-page="52" data-title="the tracking agent's reaction">
+  <div class="narration">
+    <p>And the <strong>then</strong>: the agent's chosen tool call. <code>WorkTracking.update(w17, "built the fix")</code>. The entry now reads role: built the fix.</p>
+    <p>Compare this to the machine's reaction on slide 17. The shape is the same. The <em>then</em> is not fixed in advance, though. The agent chose it, from the tools it was allowed.</p>
+  </div>
+</article>
+
+<!-- 53 -->
+<article class="slide" data-page="53" data-title="interpreting a progress update">
+  <div class="narration">
+    <p>But suppose the agent reads the same post differently. "My patch is merged. Ready for release." And it writes role: released. Does the post support what the record now claims?</p>
+  </div>
+</article>
+
+<!-- 54 -->
+<article class="slide" data-page="54" data-title="an allowed update can still be unsupported">
+  <div class="narration">
+    <p>It doesn't. "Ready for release" means it hasn't been released yet. The agent stored "released", and the post doesn't establish that.</p>
+    <p>Nothing in the concept stopped it. The update was allowed: the entry exists, and any string is a valid role. <strong>An allowed action does not guarantee an accurate interpretation.</strong> The concept can protect its own rules. It can't check whether a claim is true about the world.</p>
+    <p>What saves us is that the agent used the same action a person uses. Sam sees the entry, notices it's wrong, and corrects it through the same action: <code>WorkTracking.update(w17, "built the fix")</code>. No special undo, no digging into the agent's internals.</p>
+  </div>
+  <details class="aside" data-kind="debate">
+    <summary><span class="tag">Debate</span><span class="tease">Is "a person can correct it" enough?</span></summary>
+    <div class="body">
+      <p>It depends on whether anyone looks. Sam catches this because Sam still reads the channel. If the agent works well for a month, Sam may stop checking, and then the wrong entry stays.</p>
+      <p>Some options a designer has: keep who made each update (so an agent's claims can be shown differently), require confirmation for claims that trigger consequences, or have the agent quote the text it relied on. The lecture doesn't prescribe one. Its narrower point stands either way. Giving an agent only the actions a person could take keeps its mistakes the same kind as a person's, visible and fixable.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 55 -->
+<article class="slide" data-page="55" data-title="the planning agent identifies a concern">
+  <div class="narration">
+    <p>One more agent, at the other end of the chain. Remember identifying concerns was in the middle column too. Maya wrote "Discuss returning customers' money." Someone has to recognize that's about refunds.</p>
+    <p><strong>when</strong> <code>Convening.convene</code> returns the review. <strong>where</strong>: interpret the supplied facts. The task is to identify the review's concerns. The inputs are the description and the known references: the review in Convening, and the concerns WorkTracking follows, which include refunds. The tool is Convening.cover(review, concern).</p>
+    <p><strong>then</strong>: the planning agent calls <code>Convening.cover(the review, refunds)</code>, and the review now has refunds as a concern.</p>
+    <p>Notice again what we gave it. Not "figure out what this meeting is about" in the abstract. A short list of concerns someone is actually following, so its job is to choose from that list.</p>
+  </div>
+</article>
+
+<!-- 56 -->
+<article class="slide" data-page="56" data-title="6 · People, machines, and agents coordinate">
+  <div class="narration">
+    <p>Lesson six. Here's the sort again, updated. People still choose: convening the review, choosing a reply. Rules still carry out invites (now by roster <em>or</em> work entry), notifications and expiry. The middle column changed. Interpreting the description and updating the work description are now done by agents.</p>
+    <p>Underneath, WorkTracking. Sam records the relationship between a concern and a person, so the lookup can find Austin. The agent maintains the description, and Sam can correct it.</p>
+    <p>People keep their choices. Agents help with interpretation.</p>
+  </div>
+  <details class="aside" data-kind="industry">
+    <summary><span class="tag">In practice</span><span class="tease">A placement rule for agents you can reuse</span></summary>
+    <div class="body">
+      <p>Much current agent design starts from "what could an agent do end to end?" This lecture starts from the other side. Build the concepts and reactions first. Find the steps where a person turns loose text into a record. Put agents there, with tools that are existing actions, and with the relevant records supplied as context. Leave decisions that commit people (accepting, convening) with people.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 57 -->
+<article class="slide" data-page="57" data-title="Austin can now contribute to the review">
+  <div class="narration">
+    <p>And the payoff. WorkTracking has refunds and Austin. When the review covers refunds, the lookup reaction invites Austin and the notify reaction reaches him. Austin gets an invitation.</p>
+    <p>He still chooses whether to accept. We changed who gets asked. We didn't change who decides.</p>
+  </div>
+</article>
+
+<!-- 58 -->
+<article class="slide" data-page="58" data-title="the planning agent identifies refunds">
+  <div class="narration">
+    <p>Let's trace the full path once more, building it up. Sam has already recorded entry w17, which is what makes Austin findable. Maya does Convening.convene. The planning agent reads her description and the followed concerns, and does Convening.cover with refunds.</p>
+    <p>The key at the bottom: orange arrows are action handoffs, blue dashed lines are record reads.</p>
+  </div>
+</article>
+
+<!-- 59 -->
+<article class="slide" data-page="59" data-title="the lookup finds Austin's contribution">
+  <div class="narration">
+    <p>Next the lookup reaction reads, for refunds, Rostering (Ada) and WorkTracking w17 (Austin), plus the review time, and does Inviting.invite.</p>
+  </div>
+</article>
+
+<!-- 60 -->
+<article class="slide" data-page="60" data-title="one invitation through the system">
+  <div class="narration">
+    <p>And the rest: the notify reaction reads that Austin registered his phone and does Notifying.notify. Austin reads his PENDING invitation, checks his own availability, and does Inviting.accept.</p>
+    <p>Five actors, five concepts, one invitation. A person starts it, an agent interprets, two rule-based reactions carry it along, and a person finishes it. Each step is an action you could find in the log, and each read is a record you could inspect. If this goes wrong, you can see where.</p>
+  </div>
+  <details class="aside" data-kind="you">
+    <summary><span class="tag">For you</span><span class="tease">Trace a failure through this diagram</span></summary>
+    <div class="body">
+      <p>Pick one thing that could go wrong: the planning agent picks the wrong concern, Sam never recorded w17, Austin never registered a channel, Austin replies on Thursday morning. For each, point to the exact box where the chain breaks and say what the log would show. It's a good test of whether the structure really is as legible as it claims.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 61 -->
+<article class="slide" data-page="61" data-title="lessons 1–3: what did we learn?">
+  <div class="narration">
+    <p>Let's collect the lessons. Before I tell you, what did the first three teach? Concepts, shown as PENDING to ACCEPTED. Actions, shown as <code>invite(review, Ada, Wednesday)</code>. Reactions, shown as the Maya-machine-Ada chain.</p>
+  </div>
+</article>
+
+<!-- 62 -->
+<article class="slide" data-page="62" data-title="lessons 1–3: state and coordination">
+  <div class="narration">
+    <p>Concepts keep and govern state. Actions carry shared meaning. Reactions connect through actions.</p>
+  </div>
+</article>
+
+<!-- 63 -->
+<article class="slide" data-page="63" data-title="lessons 4–6: what did we learn?">
+  <div class="narration">
+    <p>And the second three: reads, delegation, and agent extension. Try saying each in a sentence before the next slide.</p>
+  </div>
+</article>
+
+<!-- 64 -->
+<article class="slide" data-page="64" data-title="lessons 4–6: context and delegation">
+  <div class="narration">
+    <p>Reads supply local context, to machines, to people through views, and to agents as their input. Delegation means assigning work and its upkeep, because a record is only useful if someone keeps it current. Agent extension means adding records and reactions: we added WorkTracking and two agent reactions, and left every existing concept alone.</p>
+  </div>
+</article>
+
+<!-- 65 -->
+<article class="slide" data-page="65" data-title="try it on a system you know">
+  <div class="narration">
+    <p>To finish, try it on a system you know. For example, someone requests access to something.</p>
+    <p>What event starts it? One event that someone can notice. Who acts: a person, an LLM or a machine? What do they read: a record, a message, other knowledge? What do they ask for? One meaningful action.</p>
+    <p>And then the question that did the most work today: which needed fact is missing, and who will supply it? Austin was invisible because a fact wasn't recorded. Most coordination failures I've seen are like that.</p>
+  </div>
+  <details class="aside" data-kind="you">
+    <summary><span class="tag">For you</span><span class="tease">Do this one properly, in the note box</span></summary>
+    <div class="body">
+      <p>Take a coordination from your own work (access requests, incident handoffs, release approvals) and answer the four questions for each step, then the missing-fact question. Then mark each step as "people choose", "interpretation and upkeep" or "rules carry it out".</p>
+      <p>I won't draft it for you. Paste what you write and I'll turn it into concepts and reactions with you, and we can argue about where an agent belongs. It's also good warm-up for E3, which is about composing concepts with reactions.</p>
+    </div>
+  </details>
+</article>
+
+<section>
+  <h2>Check yourself</h2>
+  <p class="meta">Try answering in your head, or in the note box at the bottom, before opening each answer.</p>
+
+  <div class="check">
+    <p class="q">1. Ada tries to accept on Thursday morning, after the machine has expired her invitation. What happens, and which part of the design is responsible?</p>
+    <details><summary>Show answer</summary>
+      <p>The accept is refused. Inviting only allows accept while the status is PENDING, and expire has already set it to EXPIRED. The concept governs its own state, so neither the timer nor Ada needs to know the rule.</p>
+    </details>
+  </div>
+
+  <div class="check">
+    <p class="q">2. Inviting and Notifying never mention each other. How does an invitation produce a phone notification?</p>
+    <details><summary>Show answer</summary>
+      <p>A reaction outside both concepts: <em>when</em> Inviting.invite, <em>where</em> the guest has a registered channel in Notifying (a read, no state change), <em>then</em> Notifying.notify. The reaction is the only thing that knows the two go together.</p>
+    </details>
+  </div>
+
+  <div class="check">
+    <p class="q">3. The roster lookup worked perfectly and still missed Austin. Why, and why was the fix a new concept instead of a smarter reaction?</p>
+    <details><summary>Show answer</summary>
+      <p>Rostering records formal responsibility, and Austin's contribution was never recorded anywhere. A reaction can only read what exists. The fix was to record the missing fact (WorkTracking) and widen the lookup to read it. WorkTracking is a separate concept because keeping current contributions is a different purpose from recording standing positions.</p>
+    </details>
+  </div>
+
+  <div class="check">
+    <p class="q">4. What are the three columns in the delegation sort, and which one did agents end up in?</p>
+    <details><summary>Show answer</summary>
+      <p>"People choose" (convene, choose a reply), "rules carry it out" (invite, notify, expire), and in between "interpretation and upkeep" (identify concerns, track contributions). Agents took over the middle column. People kept their choices.</p>
+    </details>
+  </div>
+
+  <div class="check">
+    <p class="q">5. The tracking agent wrote "released" when the post said "ready for release". Why didn't the concept stop it, and what made the mistake easy to fix?</p>
+    <details><summary>Show answer</summary>
+      <p>The update was allowed: the entry existed and role is free text. A concept can enforce its own rules but can't check a claim against the world. It was easy to fix because the agent only had the same <code>update</code> action a person has, so Sam corrected it with that action.</p>
+    </details>
+  </div>
+
+  <div class="check">
+    <p class="q">6. What did the reaction supply to the tracking agent besides Austin's post, and why?</p>
+    <details><summary>Show answer</summary>
+      <p>The relevant WorkTracking entry (w17 with its concern, party and current role). The post alone doesn't say which entry to change. The <em>where</em> clause's job is to supply local context, and for an agent that means reading the records and putting them in its input.</p>
+    </details>
+  </div>
+
+  <h2>Your thoughts</h2>
+  <div id="general-note"></div>
+
+  <nav class="nextprev">
+    <a href="designing-a-concept.html"><small>Previous</small>Designing a concept</a>
+    <a class="next" href="modularity.html"><small>Next</small>Modularity</a>
+  </nav>
+</section>
+
+<footer class="site">
+  Slides © MIT 6.1040 staff, loaded from <a href="https://61040.github.io/fa26/">61040.github.io</a> and not copied here. Narration and notes written by Claude for personal study; not affiliated with MIT.
+</footer>
+</main>
+
+<script type="module" src="../assets/lecture.js"></script>
+</body>
+</html>

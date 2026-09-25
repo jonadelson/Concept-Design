@@ -97,12 +97,6 @@
     <blockquote>The hardest single part of building a software system is deciding precisely what to build.</blockquote>
     <p>I've titled this slide "what AI cannot do", and I want to be careful with that. AI can help you brainstorm, and it can certainly write the code once you've decided. What it can't do is make the decision for you, because the decision depends on who your users are and what situation you're trying to change. That's why this part of the job is growing in importance while the rest shrinks.</p>
   </div>
-  <details class="aside" data-kind="source">
-    <summary><span class="tag">Source</span><span class="tease">"Essence and Accidents", and a book title</span></summary>
-    <div class="body">
-      <p>Brooks's essay (1986, reprinted in IEEE <em>Computer</em> in 1987 and in later editions of <em>The Mythical Man-Month</em>) splits difficulty into the <em>essential</em> and the <em>accidental</em>. The subtitle is on the slide. It seems likely that Jackson's book title, <em>The Essence of Software</em>, nods to this distinction, though I haven't seen him say so directly.</p>
-    </div>
-  </details>
 </article>
 
 <!-- 7 -->
@@ -110,12 +104,8 @@
   <div class="narration">
     <p>So if deciding what to build is the hard part, what do we need? I think we need a language for it.</p>
     <blockquote>We live at the level of our language. Whatever we can articulate we can imagine or understand or explore.</blockquote>
-    <p>The novelist Ellen Gilchrist wrote that about life in general, and it holds for design. If all you can say about an app is "it has a login page, a feed and a settings screen", you can only think about it at that level. Programmers have a rich vocabulary for code: classes, modules, APIs. Designers of functionality have mostly had screens and user stories. Concepts are my attempt to give us better words.</p>
+    <p>The slide credits those lines to the novelist Ellen Gilchrist, without a source (I couldn't confirm where she wrote them). Whatever their origin, they hold for design. If all you can say about an app is "it has a login page, a feed and a settings screen", you can only think about it at that level. Programmers have a rich vocabulary for code: classes, modules, APIs. Designers of functionality have mostly had screens and user stories. Concepts are my attempt to give us better words.</p>
   </div>
-  <details class="aside" data-kind="source">
-    <summary><span class="tag">Source</span><span class="tease">The Gilchrist quote has no citation</span></summary>
-    <div class="body"><p>The slide attributes the lines to Ellen Gilchrist, the American short-story writer, but gives no source, and I couldn't confirm which of her books or essays it comes from. Treat the exact wording as unverified.</p></div>
-  </details>
 </article>
 
 <!-- 8 -->
@@ -307,12 +297,6 @@
       <p>I couldn't identify the publication of the second headline on the slide.</p>
     </div>
   </details>
-  <details class="aside" data-kind="industry">
-    <summary><span class="tag">In practice</span><span class="tease">Reusing a signal for a second purpose</span></summary>
-    <div class="body">
-      <p>This pattern is common and usually well-intentioned: you have an engagement signal already, so you feed it into ranking. The concept lens makes the cost visible. The moment a reaction affects ranking, users' social gesture has consequences they didn't choose, and people who learn how it works start to game it. If you do fuse two concepts, the design question is whether users can tell.</p>
-    </div>
-  </details>
 </article>
 
 <!-- 22 -->
@@ -408,12 +392,6 @@
     <p>What's the purpose? Take a guess before I reveal it. It's to improve elevator utilization, and it prevents needless stops when some elevators are idle. If the system knows where everyone is going before they get in, it can group people going to nearby floors instead of having every car stop everywhere.</p>
     <p>Notice the blue note. This concept demanded a real change in behaviour. Riders had to unlearn a habit that has been the same for a century, and many people are confused the first time they meet one. It worked anyway because the purpose was valuable enough.</p>
   </div>
-  <details class="aside" data-kind="industry">
-    <summary><span class="tag">In practice</span><span class="tease">A concept that moves work to the moment of intent</span></summary>
-    <div class="body">
-      <p>The engineering trick in destination dispatch is collecting the request earlier, at the point where the user knows their intent, so the scheduler has more information. Software engineers will recognise it as batching with foreknowledge: the same move as asking for a delivery window at checkout instead of when the truck is outside. The cost is that users have to learn a new principle, and a concept whose principle nobody explains will fail however good its purpose.</p>
-    </div>
-  </details>
 </article>
 
 <!-- 30 -->
@@ -427,7 +405,7 @@
 <!-- 31 -->
 <article class="slide" data-page="31" data-title="history of destination dispatch">
   <div class="narration">
-    <p>The history is a nice example of how long a concept can wait. Leo Port, an electrical engineer in Sydney, patented destination dispatch in 1961. It wasn't built, and he let the patent lapse in 1977. Schindler's Miconic 10, in 1992, was the first commercial implementation. The PORT system came in 2009, and the name is an acronym, "Personal Occupant Requirement Terminal", that happens to honour the inventor.</p>
+    <p>The history is a nice example of how long a concept can wait. Leo Port, an electrical engineer in Sydney, patented destination dispatch in 1961. It wasn't built, and he let the patent lapse in 1977. Schindler's Miconic 10, in 1992, was the first commercial implementation. Schindler's PORT system came in 2009. The slide spells the name out as "Personal Occupant Requirement Terminal", and it's hard not to notice that it also spells the inventor's surname, though the slide doesn't say whether that was deliberate.</p>
     <p>Thirty years from patent to product. The concept was sound. What it needed was cheap computing to run the scheduling.</p>
   </div>
 </article>
@@ -459,7 +437,7 @@
   <details class="aside" data-kind="source">
     <summary><span class="tag">Source</span><span class="tease">The Airbnb experiment</span></summary>
     <div class="body">
-      <p>Airbnb ran the change as a field experiment before rolling it out. It was studied by Andrey Fradkin, Elena Grewal and David Holtz in a paper usually cited as "Reciprocity and Unveiling in Two-Sided Reputation Systems: Evidence from an Experiment on Airbnb" (<em>Marketing Science</em>, 2021). The effects they report are real but modest in size; the slide's summary is a fair gist.</p>
+      <p>Airbnb ran the change as a field experiment before rolling it out. It was studied by Andrey Fradkin, Elena Grewal and David Holtz in a paper usually cited as "Reciprocity and Unveiling in Two-Sided Reputation Systems: Evidence from an Experiment on Airbnb" (<em>Marketing Science</em>, 2021). As I understand it, the effects they report are real but modest in size, so read the slide's summary as the direction of the change, not its magnitude.</p>
     </div>
   </details>
   <details class="aside" data-kind="industry">
