@@ -1,0 +1,640 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Modularity · 6.1040</title>
+<meta name="description" content="Narrated companion to the 6.1040 Software Design lecture on modularity (MIT, Fall 2026).">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alegreya:wght@700&family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+</head>
+<body data-lecture="modularity" data-pdf="https://61040.github.io/fa26/lectures/modularity.pdf">
+
+<nav class="topbar"><div class="wrap">
+  <a href="../">← Course</a>
+  <span class="crumb">Lecture 5 · Modularity</span>
+</div><div class="progress"></div></nav>
+
+<main class="wrap">
+<header class="hero">
+  <p class="kicker">Lecture 5 · Wed Sep 23</p>
+  <h1>Modularity</h1>
+  <p class="lede">Daniel Jackson rebuilds Hacker News twice. First with concepts joined by reactions, then the way most of us would write it with classes. The comparison gives him two criteria for telling whether a division into parts is really modular.</p>
+  <p class="meta">51 slides · a full class session · <a href="https://61040.github.io/fa26/lectures/modularity.pdf">original PDF</a></p>
+
+  <details class="howto">
+    <summary>How to read this page</summary>
+    <ul>
+      <li>Each slide is loaded live from the course website, and below it is what the lecturer might plausibly have said. <strong>The narration is my reconstruction, not a transcript.</strong> Where a slide is only a picture, I say so instead of inventing a speech.</li>
+      <li>The coloured boxes are margin notes. Tap to open.
+        <span style="color:var(--source)">Source</span> points to where an idea comes from,
+        <span style="color:var(--industry)">In practice</span> connects it to industry,
+        <span style="color:var(--debate)">Debate</span> covers where it's contested, and
+        <span style="color:var(--you)">For you</span> is about following along as a listener.</li>
+      <li>Tap a slide to see it full screen. Use <em>＋ Add a note</em> on any slide. Notes are saved on this device only. <em>Copy notes for chat</em> collects them so you can paste them to Claude.</li>
+    </ul>
+  </details>
+</header>
+
+<!-- 1 -->
+<article class="slide" data-page="1" data-title="modularity">
+  <div class="narration">
+    <p>Today's topic is modularity. It's one of the oldest ideas in software engineering, and one of the most abused. Almost everyone agrees it's good. Far fewer people can say what it is.</p>
+  </div>
+</article>
+
+<!-- 2 -->
+<article class="slide" data-page="2" data-title="what you'll learn today">
+  <div class="narration">
+    <p>If you ask a working programmer how to make code modular, the answer you'll most often hear is "use interfaces". Put an abstract type in front of the implementation and you're done. That's a useful technique, but it isn't a design principle. You can wrap an interface around a badly divided system and it stays badly divided.</p>
+    <p>So the question for today is where to draw the lines between parts in the first place. By the end I want you to have two criteria you can apply to any division of functionality, whether it's concepts, classes or services.</p>
+  </div>
+  <details class="aside" data-kind="source">
+    <summary><span class="tag">Source</span><span class="tease">This is Parnas's question, from 1972</span></summary>
+    <div class="body">
+      <p>David Parnas, "On the Criteria To Be Used in Decomposing Systems into Modules", <em>Communications of the ACM</em> 15(12), 1972. He compared two ways of splitting the same small program and argued that the better split puts each design decision likely to change inside one module. He called that <em>information hiding</em>.</p>
+      <p>Jackson and Meng cite this paper directly in the related-work section of <a href="https://arxiv.org/abs/2508.14511">their 2025 paper</a> on concepts and synchronizations, so the connection is theirs, not mine. The twist this lecture adds is that the unit being hidden is a piece of user-facing functionality rather than a data structure.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 3 -->
+<article class="slide" data-page="3" data-title="where we are">
+  <div class="narration">
+    <p>First, a quick reminder of where we got to last time.</p>
+  </div>
+</article>
+
+<!-- 4 -->
+<article class="slide" data-page="4" data-title="defining a concept">
+  <div class="narration">
+    <p>Here's a concept we looked at before, <strong>Inviting</strong>. It has a purpose: to make sure that anyone taking part in something has agreed to. It has an operational principle, a little story of how it's used. A host invites guests one at a time, each guest accepts or declines, and after the invitation expires no more responses count.</p>
+    <p>On the right is the part a programmer would recognise. There's a state, which is a set of invitations, each with an engagement, a guest, an expiry date and a status. And there are actions, each with a <code>where</code> clause saying when it can happen and a <code>then</code> clause saying what it changes. You can't accept an invitation that isn't pending, for example.</p>
+    <p>Notice what Inviting doesn't know. It has no idea what an engagement is. It could be a meeting, a party or a shared document. That ignorance turns out to be the whole point of today.</p>
+  </div>
+</article>
+
+<!-- 5 -->
+<article class="slide" data-page="5" data-title="from design language to realization">
+  <div class="narration">
+    <p>When we implement a concept, those actions become the entry points of a small service. Something has to call them, and there are three kinds of caller in this picture. A person at a keyboard might invite someone. An AI agent, the robot, might do it on someone's behalf. And the gear stands for the machine itself: nobody clicks "expire", the system does it when the date passes.</p>
+    <p>The concept doesn't care which of these invoked it. An action is an action.</p>
+  </div>
+</article>
+
+<!-- 6 -->
+<article class="slide" data-page="6" data-title="composing concepts into a system">
+  <div class="narration">
+    <p>One concept on its own doesn't make an app. Here are three: <strong>Convening</strong>, which sets up meetings; Inviting; and <strong>Notifying</strong>, which sends messages to people who've registered an address.</p>
+    <p>Follow the numbers. A person registers an email. A person convenes a meeting. An agent includes participants in it. Then the machine invites those participants, the machine sends them notifications, a person accepts or declines, and eventually the machine expires whatever invitations are left.</p>
+    <p>Look at steps 4, 5 and 7. Nobody asked for those actions directly. They happened because something else happened first. The interesting question is where that "because" lives.</p>
+  </div>
+</article>
+
+<!-- 7 -->
+<article class="slide" data-page="7" data-title="how reactions are specified">
+  <div class="narration">
+    <p>It lives in a <strong>reaction</strong>. This one reads: <em>when</em> Inviting's invite action happens for some guest and engagement, <em>where</em> Convening says that engagement has a title and a date, <em>then</em> call Notifying's send with a message built from them.</p>
+    <p>The reaction is the only thing in the picture that knows about all three concepts. Inviting doesn't know notifications exist. Notifying doesn't know what a meeting is. The gear in the middle, which we'll come to think of as the application, holds the wiring.</p>
+    <p>If you've worked on large systems you'll recognise this as event-driven programming. It's how a lot of big backends are built. So before going further, I'd like you to think about what it buys you and what it costs.</p>
+  </div>
+  <details class="aside" data-kind="source">
+    <summary><span class="tag">Source</span><span class="tease">Reactions are the paper's "synchronizations"</span></summary>
+    <div class="body">
+      <p>In Eagon Meng and Daniel Jackson's paper, <a href="https://arxiv.org/abs/2508.14511"><em>What You See Is What It Does: A Structural Pattern for Legible Software</em></a> (Onward! 2025), the same when/where/then rules are called <em>synchronizations</em>, or "syncs". The course this term calls them reactions. The paper describes a small language for them and an engine that runs them, and tests the approach by building the backend of the RealWorld benchmark app, a Medium-like blogging site.</p>
+      <p>The paper's abstract names three things it wants from code structure: incrementality (small, local changes), integrity (not breaking earlier work) and transparency (being able to see what happened). Those are the benefits this lecture is arguing for, just in paper form.</p>
+    </div>
+  </details>
+  <details class="aside" data-kind="industry">
+    <summary><span class="tag">In practice</span><span class="tease">Benefits and costs you've probably felt</span></summary>
+    <div class="body">
+      <p>The standard benefits: the thing that emits an event doesn't depend on who listens, so you can add behaviour without touching it. The standard costs: control flow is no longer visible in any one place, so "what happens when a user invites someone?" can mean grepping for subscribers. Debugging a chain of events is notoriously hard.</p>
+      <p>Martin Fowler's 2017 talk and article "What do you mean by 'Event-Driven'?" is a good untangling of the several different things the phrase covers. The course's version differs from typical pub/sub in one important way: the rules are declarative and live together in one layer, and the paper claims the runtime keeps a trace of which rule caused which action. That's their answer to the debugging cost.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 8 -->
+<article class="slide" data-page="8" data-title="concepts for hacker news">
+  <div class="narration">
+    <p>Let's make this concrete with an app most of you know.</p>
+  </div>
+</article>
+
+<!-- 9 -->
+<article class="slide" data-page="9" data-title="design by concept">
+  <div class="narration">
+    <p>This is a Hacker News page, labelled with its concepts. There's <strong>Posting</strong> for the story itself, <strong>Upvoting</strong> for the little triangles, <strong>Favoriting</strong>, <strong>Commenting</strong>, <strong>KarmaTracking</strong> (that number on a user's profile) and <strong>Sessioning</strong> behind the login link.</p>
+    <p>Six concepts cover nearly everything you can do on the site. Each one you could explain to a new user in a sentence, and each one you've seen in other apps.</p>
+  </div>
+  <details class="aside" data-kind="source">
+    <summary><span class="tag">Source</span><span class="tease">Why this particular thread?</span></summary>
+    <div class="body">
+      <p>The screenshot is a real Hacker News discussion of "Jackson structured programming", or JSP, a program design method developed in the 1970s by Michael A. Jackson. Michael Jackson is Daniel Jackson's father. The comments mention JSP's idea of structuring a program around the structure of its inputs and outputs, and its later view of a system as a collection of long-running processes, one per real-world entity. That second idea is a distant ancestor of concepts. It's a private joke on the slide, but not only a joke.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 10 -->
+<article class="slide" data-page="10" data-title="a sample concept: Upvoting">
+  <div class="narration">
+    <p>Let's zoom in on one. The circles mark Upvoting in three different places: the triangle next to a Hacker News story, the "Recommend" link under a newspaper comment, and the up and down arrows on a Q&amp;A site. Different names and slightly different behaviour, but the same idea.</p>
+    <p>That lets me restate what a concept is. It's a coherent course of action that a user engages in. It's realized as a mechanism, some state and code that make it work. It's reusable and familiar, which is why you knew what the Recommend link did the first time you saw it. And, the property we care about today, it can be designed, coded and explained independently of the other concepts around it.</p>
+  </div>
+</article>
+
+<!-- 11 -->
+<article class="slide" data-page="11" data-title="defining the concept">
+  <div class="narration">
+    <p>Here's Upvoting written out. The concept is generic in two types, User and Item. It doesn't know that items are posts, which is why the same definition works for comments or answers.</p>
+    <p>The top half, the purpose and principle, is what concept design adds. The purpose is to rank items by popularity. The principle says that after a series of upvotes, you can rank items by how many votes each got. The bottom half, state and actions, is standard computer science. It's a state machine, the sort of thing you'd write in any modelling language.</p>
+    <p>I've left you some questions on the right. What bad situation does the purpose prevent? What's an invariant of the state, something that should always be true of the set of votes? How would you add downvoting? And why is there an <code>unvote</code> action at all? Try them before we move on. The last two are connected in a way that will matter in ten minutes.</p>
+  </div>
+  <details class="aside" data-kind="you">
+    <summary><span class="tag">For you</span><span class="tease">Four small questions worth five minutes</span></summary>
+    <div class="body">
+      <p>These are the kind of questions E2 and E3 ask about concepts. Write your answers in the note box under this slide and paste them to me if you'd like a second opinion. A hint for the invariant: think about what stops one person from inflating an item's rank. Jackson's own catalog entry for this concept (linked at slide 14) discusses several of these, so read it <em>after</em> you've had a go.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 12 -->
+<article class="slide" data-page="12" data-title="how unique is it?">
+  <div class="narration">
+    <p>Here's a puzzle. No other app is quite like Hacker News. Yet if you write it out as concepts, it's Posting plus Commenting plus Upvoting plus KarmaTracking plus a few more, and each of those appears in dozens of other apps nearly unchanged.</p>
+    <p>So where's the innovation?</p>
+  </div>
+</article>
+
+<!-- 13 -->
+<article class="slide" data-page="13" data-title="so where's the innovation?">
+  <div class="narration">
+    <p>It clearly exists. The slide gives Hacker News at over ten million page views a day, so somebody thought it was worth building, and many people think it was worth using.</p>
+    <p>Part of the answer is what Margaret Boden calls combinational creativity: taking familiar elements and putting them together in a new way. Some of the innovation is inside the concepts themselves. In Hacker News's Posting, a post is a title plus a link, which is a narrower thing than a post on most social sites, and that constraint shapes the whole community.</p>
+    <p>But the part I want to focus on is highlighted: innovation in how concepts are <em>coordinated</em>. On Hacker News you can't downvote until your own posts have been upvoted enough. That rule isn't part of Upvoting and isn't part of KarmaTracking. It's a relationship between them. And that's where much of an app's particular character comes from.</p>
+  </div>
+  <details class="aside" data-kind="source">
+    <summary><span class="tag">Source</span><span class="tease">Boden's three kinds of creativity</span></summary>
+    <div class="body">
+      <p>Margaret Boden, <em>The Creative Mind: Myths and Mechanisms</em> (1990, with a revised second edition in 2004). She distinguishes <em>combinational</em> creativity (new combinations of familiar ideas), <em>exploratory</em> (working within an established style or space) and <em>transformational</em> (changing the space itself). Concept design leans heavily on the first, which is also the kind the "How to innovate" lecture argued you can learn to do on purpose.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 14 -->
+<article class="slide" data-page="14" data-title="concepts as carriers of design knowledge">
+  <div class="narration">
+    <p>Because concepts recur, what we learn about one can travel with it. This slide shows the kind of entry you could write for Upvoting in a catalog. Related concepts: Rating, Recommending, Reacting. Design variants: using downvote to cancel an upvote, taking age into account in ranking, weighting downvotes more heavily, and various ways of pinning down who a voter is. Typical uses, and concepts it's often used with, like KarmaTracking and Authenticating.</p>
+    <p>And known issues, which is the question I put to you. High vote counts can keep old content on top. Early upvotes snowball, because visible items get more votes. Upvoting tends to reward agreement, which feeds echo chambers. And you need some way to stop people voting twice. None of this is specific to Hacker News. If you're about to add upvoting to your app, you'd want to know it first.</p>
+  </div>
+  <details class="aside" data-kind="source">
+    <summary><span class="tag">Source</span><span class="tease">The real catalog entry for Upvote</span></summary>
+    <div class="body">
+      <p>Jackson wrote up <a href="https://essenceofsoftware.com/studies/small/upvote/">"Upvote: An Example Concept"</a> on essenceofsoftware.com as a sample entry for a concept catalog, explicitly modelled on the success of design patterns. It covers negative counts, eventual consistency, who can see votes, and a note that Facebook's Like merges Upvote, Reaction and Recommendation into one concept. That last point is exactly what slide 51 asks you to revisit.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 15 -->
+<article class="slide" data-page="15" data-title="extending hacker news">
+  <div class="narration">
+    <p>Now let's add something to Hacker News and see where the new code has to go.</p>
+  </div>
+</article>
+
+<!-- 16 -->
+<article class="slide" data-page="16" data-title="hacker news again">
+  <div class="narration">
+    <p class="stage">The slide is the same Hacker News discussion page again, this time without the concept labels. It works as a pause before the design problem on the next slide.</p>
+  </div>
+</article>
+
+<!-- 17 -->
+<article class="slide" data-page="17" data-title="adding application-specific functionality">
+  <div class="narration">
+    <p>Here's the behaviour I want: you can't downvote a post until you've received two upvotes on your own posts. We have Upvoting, now with a downvote action, and Posting, which records who wrote what.</p>
+    <p>The obvious move is to open up Upvoting and add the check. Why is that bad? Because the rule isn't about upvoting. Once Upvoting knows about authors and thresholds, it can't be reused in an app that doesn't have them, and you can't understand it without understanding Posting.</p>
+    <p>The better move is to notice there's a missing concept. On the right is <strong>KarmaTracking</strong>, whose purpose is to privilege good users. Each user has a karma number, and there's a <code>reward</code> action. The hint on the slide is that karma isn't only for upvoting. Once it exists, other features can use it too.</p>
+  </div>
+  <details class="aside" data-kind="industry">
+    <summary><span class="tag">In practice</span><span class="tease">What Hacker News actually does</span></summary>
+    <div class="body">
+      <p>The slide simplifies. According to the <a href="https://news.ycombinator.com/newsfaq.html">Hacker News FAQ</a>, there are no down arrows on stories at all. Downvote arrows appear on comments once a user reaches a karma threshold, and never on direct replies to your own comments. Flagging and vouching also have small karma thresholds. So KarmaTracking gates several features on the real site, which rather proves the slide's hint.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 18 -->
+<article class="slide" data-page="18" data-title="a first reaction">
+  <div class="narration">
+    <p>We'll wire it up in two reactions. Here's the first: when Upvoting's upvote happens on a post, where Posting says the author of that post is some user, then KarmaTracking rewards that user with 10 points.</p>
+    <p>Follow the dotted lines. The reaction watches one concept's action, reads another concept's state, and invokes a third concept's action. None of the three concepts changed.</p>
+  </div>
+</article>
+
+<!-- 19 -->
+<article class="slide" data-page="19" data-title="a second reaction">
+  <div class="narration">
+    <p>The second reaction needs something new. A downvote shouldn't just happen whenever a user clicks. It should happen only if the user is allowed. So we model the click itself as an action of a pseudo-concept, <strong>Requesting</strong>, which has a <code>request</code> action for incoming requests and a <code>respond</code> action for replies.</p>
+    <p>Now the reaction reads: when someone requests a downvote on a post, where KarmaTracking says their karma is at least 20, then Upvoting's downvote happens. If the where clause fails, nothing happens. Two upvotes at 10 points each is 20, which is the rule we wanted.</p>
+  </div>
+  <details class="aside" data-kind="you">
+    <summary><span class="tag">For you</span><span class="tease">Requesting shows up in E3</span></summary>
+    <div class="body">
+      <p>The <a href="https://61040.github.io/fa26/assignments/e3/">E3 exercise</a> on composing concepts uses exactly this device. It explains that every user request is treated as an action of a special Requesting concept, whose arguments say which concept action the user wants. E3 also spells out a detail the slides skip: actions in the matching clause are <em>completions</em> (the action has happened) while actions in the then clause are <em>invocations</em> (please do this). E3's URL shortener is a good next exercise if you want to try writing reactions yourself.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 20 -->
+<article class="slide" data-page="20" data-title="controlling downvoting in two reactions">
+  <div class="narration">
+    <p>Put both reactions together and you have the whole feature. One reaction earns karma, the other spends it as permission.</p>
+    <p>There's a question on the slide worth pausing on. Why does the first reaction say <code>Upvoting.upvote (post)</code> and not <code>upvote (user, post)</code>? Because in this notation a name you mention gets bound. If I wrote <code>user</code> there, it would bind to the person who <em>clicked</em> upvote. The where clause then requires that same user to be the post's author, so the reaction would only fire when people upvote their own posts. Leaving the voter out lets <code>user</code> be bound by Posting instead, to the author. It's a small thing, but it's exactly the kind of bug these rules make easy to see and easy to fix.</p>
+  </div>
+</article>
+
+<!-- 21 -->
+<article class="slide" data-page="21" data-title="reactions viewed over traces">
+  <div class="narration">
+    <p>Another way to see reactions is over a trace, a timeline with one vertical line per concept. Alice creates post p1. Bob creates p2. Bob upvotes p1; Posting says p1's author is Alice, so Alice gets 10. Carol upvotes p1, and Alice gets another 10. Then Alice requests a downvote on Bob's post. KarmaTracking says she has at least 20, so the downvote goes through.</p>
+    <p>Three things to notice. The horizontal links aren't calls. Upvoting never calls KarmaTracking. The two are decoupled, and the connection is made from outside. Second, if you look down any one line, that concept is running a perfectly ordinary scenario of its own. KarmaTracking sees two rewards. It has no idea why. And because of that, the concepts stay largely independent of this application. The Hacker News part is in the links.</p>
+  </div>
+  <details class="aside" data-kind="source">
+    <summary><span class="tag">Source</span><span class="tease">Traces as a debugging tool</span></summary>
+    <div class="body">
+      <p>The Meng and Jackson paper makes this picture operational. Every action is recorded along with a <em>flow token</em> that ties it back to the request that started the chain, so you can ask "which actions did this one request cause, and through which syncs?" They describe debugging a registration bug in their RealWorld implementation this way: query the flow for the failing request, then hand the syncs involved to an LLM to reason about.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 22 -->
+<article class="slide" data-page="22" data-title="an architectural view: externalizing connections">
+  <div class="narration">
+    <p>Step back and compare two architectures. On the left, what I'll call 1980s software development: modules with arrows between them, each arrow a dependency. This module calls that one, which reads from a third. Every arrow is a reason you can't change one module without checking another.</p>
+    <p>On the right, the concepts (the icons stand for things like notifying, scheduling, karma and a catalog) have no arrows between them. The dotted lines are mediated. Control and data pass between them only through a conductor that coordinates, and the conductor reads from a score, the app-specific details. That's the set of reactions. The music for this particular app lives there, not in the instruments.</p>
+  </div>
+  <details class="aside" data-kind="industry">
+    <summary><span class="tag">In practice</span><span class="tease">Orchestration, microservices, and the tangle</span></summary>
+    <div class="body">
+      <p>In microservices vocabulary the conductor picture is <em>orchestration</em>: a coordinator tells services what to do, as opposed to <em>choreography</em>, where services react to each other's events. Reactions sit in an interesting middle position. They're event-triggered like choreography, but they're all written in one place, like an orchestrator.</p>
+      <p>The paper says it plainly: concepts resemble microservices "in spirit", but microservices in practice "often end up in a tangle of dependencies", because services call each other and query each other's data. The left-hand picture isn't only a 1980s picture.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 23 -->
+<article class="slide" data-page="23" data-title="a reminder: how we didn't do it">
+  <div class="narration">
+    <p>To be clear about what we avoided: we did not have Upvoting's upvote action read the author from Posting and then call reward in KarmaTracking. That's the natural way to write it, and it's crossed out.</p>
+    <p>The rule is strict. Concepts never call each other's actions. They never read or write each other's state. And they never share mutable composite objects, the kind where one concept holds a reference to a structure another concept is changing.</p>
+    <p>You might object that the first reaction reads Posting's state. It does. But the reaction does it, not a concept. The concepts themselves stay ignorant of one another.</p>
+  </div>
+  <details class="aside" data-kind="debate">
+    <summary><span class="tag">Debate</span><span class="tease">Does the coupling just move somewhere else?</span></summary>
+    <div class="body">
+      <p>A sceptical engineer's first thought: the dependency on Posting's author field hasn't disappeared, it's moved into a reaction. That's true, and it's the point. The claim isn't zero coupling. It's that coupling specific to this app is gathered in one layer, stated declaratively, while the concepts stay reusable.</p>
+      <p>The paper is candid about the cost. Its authors write that the "fragmentation of the conditions under which an action is invoked" made it harder to understand a series of actions at a glance, offset by behaviour that would otherwise be repeated across endpoints collapsing into a single sync. Keep that in mind when you reach slide 38, where fragmentation is the villain.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 24 -->
+<article class="slide" data-page="24" data-title="your turn">
+  <div class="narration">
+    <p>Your turn. Can you think of other ways to use karma in a social media app? Some prompts: could karma make upvoting more reliable? Could it help against botnets? Could it reward star contributors?</p>
+    <p>Talk to the person next to you, and each of you submit an idea through the class site. For each one, say which concepts are involved and what the reactions are.</p>
+  </div>
+  <details class="aside" data-kind="you">
+    <summary><span class="tag">For you</span><span class="tease">Do the exercise in the note box</span></summary>
+    <div class="body">
+      <p>You can't use the join code, but the exercise works fine alone. Pick one idea, then write the reaction in the when/where/then form from slides 18 and 19. If it needs a new concept, write its state and actions too. Paste it to me and I'll check whether any concept ended up knowing about another.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 25 -->
+<article class="slide" data-page="25" data-title="how reactions are used">
+  <div class="narration">
+    <p>So far we've used reactions for one feature. They turn out to do a lot more.</p>
+  </div>
+</article>
+
+<!-- 26 -->
+<article class="slide" data-page="26" data-title="what are reactions used for?">
+  <div class="narration">
+    <p>Here's a list, each with a small example. Maintaining invariants: when a post is deleted, delete its comments, so there are no comments without a post. Authentication and access control: only the author can delete a post. Karma constraints, which we just did. Logging and notification: tell me when someone responds to my post.</p>
+    <p>On the other side, some less obvious ones. Getting inputs: the author of a new post is whoever the session says is logged in. Response hydration: when you fetch a post, attach the author's picture from another concept. Achieving synergy, which I'll show you shortly. Inferring intent, like marking a post read when you scroll past it. Coordination, such as granting access when someone joins a group. And automation: when you like someone's post, follow them.</p>
+    <p>That's a lot of what we'd normally call "business logic". In this style, most of it becomes reactions, and the concepts stay generic.</p>
+  </div>
+</article>
+
+<!-- 27 -->
+<article class="slide" data-page="27" data-title="an example of a bad reaction">
+  <div class="narration">
+    <p>Reactions are powerful, which means they can also do harm. Here's one that did.</p>
+  </div>
+</article>
+
+<!-- 28 -->
+<article class="slide" data-page="28" data-title="an erroneous message">
+  <div class="narration">
+    <p>This is a real email, sent to MIT's HCI seminar list in November 2018. It says: "Despite some erroneous messages sent to this list accidentally, Kanit's talk is happening! Please join us on Monday."</p>
+    <p>Somebody had to send that because other people on the list had received what looked like cancellations. How does a seminar get cancelled by accident?</p>
+  </div>
+</article>
+
+<!-- 29 -->
+<article class="slide" data-page="29" data-title="the cancellation chain">
+  <div class="narration">
+    <p>Here's the chain. The seminar is announced by email to the list, with a calendar event attached. Google Calendar installs the event in each recipient's calendar automatically. One recipient decides they're not going and deletes it from their calendar, a private act of tidying up. And Google Calendar, following its rule, sends a cancellation email to the other invitees.</p>
+    <p>The help text on the left says it outright: tap Delete, and Google Calendar will send a cancellation email to the guests. Every step made sense locally. The chain as a whole did something nobody wanted.</p>
+  </div>
+</article>
+
+<!-- 30 -->
+<article class="slide" data-page="30" data-title="EventPlanning and Inviting">
+  <div class="narration">
+    <p>In concept terms, two concepts are involved. <strong>EventPlanning</strong>, whose purpose is to record your upcoming engagements, with actions to create and delete events. And Inviting, whose purpose, as we saw at the start, is mutual consent, with actions to accept and decline.</p>
+    <p>The red dotted line is the bad reaction: deleting an event triggers declining the invitation, or worse. Deleting from my calendar is about my records. Declining is a message to other people. Tying them together removes a choice the user should have had, and it undermines Inviting's own purpose, because a declination I didn't consent to send isn't consent.</p>
+  </div>
+</article>
+
+<!-- 31 -->
+<article class="slide" data-page="31" data-title="make the reaction optional">
+  <div class="narration">
+    <p>This was a long-standing problem in Apple's iCal too. The top dialog is the old one: deleting a meeting removes it and notifies the invitees, and you can't undo it. That's a nasty trap if the event was spam, because "notifying" the sender confirms your address is live.</p>
+    <p>The bottom dialog is the fix: Delete and Notify, or Delete and Don't Notify. The resolution to the design problem was simply to make the reaction optional. Nothing in either concept had to change. Only the wiring did.</p>
+  </div>
+  <details class="aside" data-kind="industry">
+    <summary><span class="tag">In practice</span><span class="tease">Calendar spam made this visible</span></summary>
+    <div class="body">
+      <p>Spam invitations sent to iCloud calendars were widely reported around late 2016, and the standard advice at the time was not to decline them, since declining told the spammer the address worked. That's the situation the top dialog walks you into. I'm not certain which macOS version introduced the "Delete and Don't Notify" button, so I won't guess.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 32 -->
+<article class="slide" data-page="32" data-title="an example of a good reaction">
+  <div class="narration">
+    <p>Now an example of a reaction done well.</p>
+  </div>
+</article>
+
+<!-- 33 -->
+<article class="slide" data-page="33" data-title="synergy in design">
+  <div class="narration">
+    <p>This is Gmail. In Gmail, Sent and Trash look like folders in the sidebar, but they're really labels. A message is "in the trash" because it carries the trash label, so looking in Trash is just a label lookup.</p>
+    <p>Why is that a great design? Because the reaction that labels a deleted item as trash lets Trashing and Labeling share one mechanism. Everything you can do with labels, you can now do with trash. The search at the bottom, <code>label:todo label:trash</code>, finds deleted messages that were still on your to-do list. Nobody had to build a "search the trash" feature. It came free from the combination.</p>
+    <p>That's what I mean by synergy: two concepts combined so that the whole does more than the parts. The bad reaction took something away from the user. This one gives them something.</p>
+  </div>
+  <details class="aside" data-kind="source">
+    <summary><span class="tag">Source</span><span class="tease">Synergy in The Essence of Software</span></summary>
+    <div class="body">
+      <p>Synergy is one of the ideas about concept composition that Jackson develops in <em>The Essence of Software</em> (2021), alongside the concern this lecture opened with, that composition must not break the concepts' individual behaviour. I don't remember precisely which examples the book uses for it, so check before quoting me. The shorter <a href="https://essenceofsoftware.com/tutorials/concept-basics/sync/">"Concept composition and sync" tutorial</a> on the book's website is free and covers the mechanics of syncs.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 34 -->
+<article class="slide" data-page="34" data-title="seeking modularity">
+  <div class="narration">
+    <p>Let's step back and ask the general question. What is modularity, exactly?</p>
+  </div>
+</article>
+
+<!-- 35 -->
+<article class="slide" data-page="35" data-title="two criteria">
+  <div class="narration">
+    <p>I'll give you two criteria.</p>
+  </div>
+</article>
+
+<!-- 36 -->
+<article class="slide" data-page="36" data-title="seeking criteria">
+  <div class="narration">
+    <p>Imagine you've divided some functionality into parts. Here there are three boxes, each a single colour: each part holds one piece of functionality, and each piece of functionality sits in one part. What makes a division like this modular? The next two slides show the two ways it can go wrong.</p>
+  </div>
+</article>
+
+<!-- 37 -->
+<article class="slide" data-page="37" data-title="separation vs conflation">
+  <div class="narration">
+    <p>The first criterion is <strong>separation</strong>. Unrelated functions should be separated, not <strong>conflated</strong> in the same part. In the picture, one box is half green and half blue: two unrelated pieces of functionality living together.</p>
+    <p>What goes wrong? The part is more complex than it needs to be, because you have to understand both functions to understand it. And it's less reusable, because anyone who wants the green part gets the blue one too.</p>
+  </div>
+  <details class="aside" data-kind="source">
+    <summary><span class="tag">Source</span><span class="tease">Cohesion, renamed and sharpened</span></summary>
+    <div class="body">
+      <p>Engineers will hear <em>cohesion</em> here, from Stevens, Myers and Constantine's "Structured Design" (<em>IBM Systems Journal</em>, 1974). The WYSIWID paper draws the link itself, with a difference. In structured design, cohesion was judged by control and data flow in the code. In concept design, what belongs together is decided by a <em>purpose in the world</em>. That gives you a test you can apply before any code exists: does this part serve one purpose a user would recognise?</p>
+    </div>
+  </details>
+</article>
+
+<!-- 38 -->
+<article class="slide" data-page="38" data-title="encapsulation vs fragmentation">
+  <div class="narration">
+    <p>The second criterion is <strong>encapsulation</strong>. Each piece of functionality should be encapsulated in one part, not <strong>fragmented</strong> across several. In the picture, the green is whole in the first box but also leaks into the second.</p>
+    <p>What goes wrong this time? The parts become coupled, because they share responsibility for one thing and have to agree about it. And changes aren't localized. If you change how the green functionality works, you have to find and edit every part it's spread across.</p>
+    <p>Conflation and fragmentation are the two failure modes, and they're mirror images. One puts too much in a part. The other puts too little of something in each part.</p>
+  </div>
+  <details class="aside" data-kind="industry">
+    <summary><span class="tag">In practice</span><span class="tease">Fragmentation is what a cross-team feature feels like</span></summary>
+    <div class="body">
+      <p>If you've shipped a feature that needed coordinated changes in four services owned by three teams, you've met fragmentation. Conway's law (Melvin Conway, "How Do Committees Invent?", <em>Datamation</em>, 1968) says a system's structure tends to copy the communication structure of the organisation that built it. So a division that fragments functionality usually fragments the people, too.</p>
+      <p>Domain-driven design's <em>bounded contexts</em> push against both failure modes at the scale of teams and services. The WYSIWID paper compares concepts to DDD's <em>aggregates</em>, which share the aim of gathering what serves one purpose but, the authors note, "do not usually form modules".</p>
+    </div>
+  </details>
+</article>
+
+<!-- 39 -->
+<article class="slide" data-page="39" data-title="software made simple">
+  <div class="narration">
+    <p class="stage">The slide is a photo of a BusinessWeek cover dated September 30, 1991. The headline is "Software Made Simple", with a baby at a computer keyboard, and the cover line reads "It's called object-oriented programming – a way to make computers a lot easier to use. Here's what it can do for you."</p>
+    <p>The cover sets up what follows. Object orientation was sold as the answer to exactly this problem. Let's see how it does against the two criteria.</p>
+  </div>
+  <details class="aside" data-kind="debate">
+    <summary><span class="tag">Debate</span><span class="tease">Is this fair to objects?</span></summary>
+    <div class="body">
+      <p>Jackson has argued the case at length in <a href="https://essenceofsoftware.com/posts/concepts-and-oop/">"Why concepts aren't objects"</a>. His target is narrower than "OOP is bad". He separates objects as individuals with identity (fine), objects as an implementation technique (fine), and object-oriented <em>domain modelling</em>, which "forces behavior, relationships, and multi-object actions into single objects". It's the last that he says creates needless coupling. He also admits some of the confusion is his fault, for giving concepts object-like names such as Post rather than Posting.</p>
+      <p>An OO defender would reply that the next few slides show naive OO, and that experienced designers use services, events and composition to avoid it. The counter-reply is that the naive version is what most codebases, and most LLMs, actually produce.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 40 -->
+<article class="slide" data-page="40" data-title="let's code hacker news!">
+  <div class="narration">
+    <p>Let's code Hacker News, the way you probably learned to.</p>
+  </div>
+</article>
+
+<!-- 41 -->
+<article class="slide" data-page="41" data-title="let's look at an example: hacker news">
+  <div class="narration">
+    <p>Same page, same concepts, with one change: I've labelled the login as <strong>Authenticating</strong> this time. We'll build it feature by feature and watch where each feature's code ends up.</p>
+  </div>
+</article>
+
+<!-- 42 -->
+<article class="slide" data-page="42" data-title="let's build it!">
+  <div class="narration">
+    <p>We start with two classes, the nouns. A <code>User</code> has a name and password, with methods to create one and to authenticate. A <code>Post</code> has an author, which is a User, and a body. So far this looks perfectly sensible.</p>
+  </div>
+</article>
+
+<!-- 43 -->
+<article class="slide" data-page="43" data-title="adding upvoting">
+  <div class="narration">
+    <p>Now add upvoting. Where does it go? Upvotes are on posts, so into Post: two sets of users, <code>ups</code> and <code>downs</code>, and methods to upvote and downvote. Nothing about this feels wrong while you're writing it.</p>
+  </div>
+</article>
+
+<!-- 44 -->
+<article class="slide" data-page="44" data-title="adding karma">
+  <div class="narration">
+    <p>Now karma. Karma belongs to users, so User gets an <code>int karma</code>, a method to award it, and a method to check it. And the rule linking votes to karma has to go somewhere. It goes in Post: upvote now calls <code>author.award(10)</code>, and downvote checks <code>u.hasKarma(10)</code> first.</p>
+    <p>This is precisely the version I crossed out on slide 23, now in code. Post calls into User's karma. The coupling that lived in a reaction is now buried inside a method body.</p>
+  </div>
+</article>
+
+<!-- 45 -->
+<article class="slide" data-page="45" data-title="adding commenting">
+  <div class="narration">
+    <p>Then commenting. Comments are on posts, so Post gets a set of comments and an <code>addComment</code> method. Look how Post has grown. And notice that the karma threshold in downvote has quietly changed from 10 to 20, which is the sort of edit that happens in the middle of someone else's feature.</p>
+  </div>
+</article>
+
+<!-- 46 -->
+<article class="slide" data-page="46" data-title="what's wrong with this code?">
+  <div class="narration">
+    <p>So what's wrong with it? Colour each line by the concept it serves. User authentication is red, Posting green, Upvoting brown, Commenting purple, Karma blue.</p>
+    <p>User is red and blue. Post is green, brown, blue and purple. That's <strong>conflation</strong>: Post mixes posting, voting, karma and comments. The consequence is that the classes aren't reusable. You can't take this Post class to an app that doesn't have karma points.</p>
+    <p>Now look at a single colour. Karma is in both classes. Commenting is split between Post and, presumably, a Comment class. That's <strong>fragmentation</strong>. And its consequence is that the classes can't be built independently. To build Post, you need User to exist already, because Post calls its methods.</p>
+    <p>Both criteria fail, in a program with five features and two classes.</p>
+  </div>
+  <details class="aside" data-kind="source">
+    <summary><span class="tag">Source</span><span class="tease">Parnas again: the "uses" relation</span></summary>
+    <div class="body">
+      <p>"Can't be built independently" has a precise ancestor. In "Designing Software for Ease of Extension and Contraction" (<em>IEEE TSE</em>, 1979), Parnas defined the <em>uses</em> relation between modules and proposed that A should use B only if that makes A simpler and there's no useful subset of the system containing A without B. The WYSIWID paper quotes this rule and says, citing pages 274–276 of <em>The Essence of Software</em>, that common OO practice violates it systematically. Post using User's karma methods is a small example: there's clearly a useful Hacker News subset with posts and no karma.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 47 -->
+<article class="slide" data-page="47" data-title="actually, it was even worse than this">
+  <div class="narration">
+    <p>Actually, it was worse than this, even at the start. Go back to the first two classes. Where does a new post go once you've created it? Where's the set of all users, so that you can look one up to authenticate? Neither class has anywhere to put it.</p>
+    <p>That code is truly broken. The usual fix is to add a class with a name like <code>Users</code>, a manager or repository. Or posts end up as a list inside User, which is yet more needless coupling. Either way the tidy picture of one class per noun was never real.</p>
+  </div>
+  <details class="aside" data-kind="industry">
+    <summary><span class="tag">In practice</span><span class="tease">Every codebase has a UserService</span></summary>
+    <div class="body">
+      <p>This is where <code>UserService</code>, <code>UserRepository</code> and <code>UserManager</code> come from. In a concept design, "the set of all users" is simply part of a concept's state, the <em>a set of Users with…</em> line. Collections are first-class, so there's nothing to invent. The WYSIWID paper makes the same observation about typical RealWorld implementations: they're split into router, controller and model layers, each organised "one file for each entity", so a single feature is spread across all of them.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 48 -->
+<article class="slide" data-page="48" data-title="a better way">
+  <div class="narration">
+    <p>There's a better way, and you've already seen most of it.</p>
+  </div>
+</article>
+
+<!-- 49 -->
+<article class="slide" data-page="49" data-title="the concept version">
+  <div class="narration">
+    <p>Here's the same application as concepts, coloured the same way. Authenticating has a set of users with usernames and passwords, and actions to register and authenticate. Posting has posts with an author and text. KarmaTracking has actors with karma. Upvoting has votes with a voter and an item. Commenting has comments with a commenter, a target and text. Each box is one colour now. Nothing is conflated, and each feature is in exactly one place.</p>
+    <p>On the right are the two reactions that make it Hacker News. When an upvote happens on an item that has an author, award the author 10. When a downvote is requested by a user with 20 or more karma, do the downvote.</p>
+    <p>Look at the yellow note. Each concept has its own name for the people in it: Voter, Author, Commenter, Actor. Those are generic type parameters. In this app they'll all be bound to <code>Authenticating.User</code>. But Upvoting doesn't know that, and that's why you could lift it out and drop it into a recipe site where the items are recipes.</p>
+  </div>
+  <details class="aside" data-kind="debate">
+    <summary><span class="tag">Debate</span><span class="tease">What do you lose with generic references?</span></summary>
+    <div class="body">
+      <p>If Upvoting's Voter is just an opaque identifier, nothing stops a vote from referring to a user who doesn't exist. In a normal schema a foreign key would catch that. The WYSIWID paper says they represent all cross-concept references as UUIDs and admits that, because database schemas lack polymorphism, "static checking cannot yet ensure that such references are used consistently".</p>
+      <p>So you trade a type-checker's help for independence, and you'd rely on reactions (slide 26's "maintaining invariants") to keep references tidy. Whether that's a good trade probably depends on how often you actually reuse the concepts.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 50 -->
+<article class="slide" data-page="50" data-title="parting thought">
+  <div class="narration">
+    <p>One parting thought to take away.</p>
+  </div>
+</article>
+
+<!-- 51 -->
+<article class="slide" data-page="51" data-title="Facebook reactions">
+  <div class="narration">
+    <p>Remember our discussion about Facebook's reactions, the row of emoji under a post, and whether that was Upvoting, Reacting or Recommending? Can you now recast that analysis in terms of reactions, the design mechanism? What happens automatically when someone taps "angry", and what does that automation cost or give the person who tapped it?</p>
+    <p>Join the discussion on the forum. Next time we'll look more closely at how to design reactions themselves.</p>
+  </div>
+  <details class="aside" data-kind="you">
+    <summary><span class="tag">For you</span><span class="tease">The forum question, for you to answer</span></summary>
+    <div class="body">
+      <p>The forum is for enrolled students, so write your answer in the note box and paste it to me instead. A starting point: Jackson's Upvote catalog entry says Facebook folds Upvote, Reaction and Recommendation into one Like, with outcomes such as an angry reaction counting as an upvote. Try writing that as a reaction (when Reacting.react …, then Upvoting.upvote …) and then decide whether a user would want it.</p>
+    </div>
+  </details>
+</article>
+
+<section>
+  <h2>Check yourself</h2>
+  <p class="meta">Try answering in your head, or in the note box at the bottom, before opening each answer.</p>
+
+  <div class="check">
+    <p class="q">1. Name the two criteria for modularity and the failure each one prevents. Which failure does "karma is stored in User but awarded from inside Post" illustrate?</p>
+    <details><summary>Show answer</summary>
+      <p>Separation (unrelated functions not <em>conflated</em> in one part) and encapsulation (one piece of functionality not <em>fragmented</em> across parts). Karma living in User while its rule lives in Post is fragmentation: the karma feature is spread over two classes, which couples them and means a change to karma rules touches both.</p>
+    </details>
+  </div>
+
+  <div class="check">
+    <p class="q">2. Why not just add the karma check to Upvoting's downvote action?</p>
+    <details><summary>Show answer</summary>
+      <p>It would conflate a Hacker News policy with a generic voting mechanism. Upvoting would then depend on authors and karma, so it couldn't be reused in an app without them, understood on its own, or built before KarmaTracking. Putting the rule in a reaction keeps both concepts generic.</p>
+    </details>
+  </div>
+
+  <div class="check">
+    <p class="q">3. List the three things concepts never do to each other. The first Hacker News reaction reads Posting's state. Why doesn't that break the rule?</p>
+    <details><summary>Show answer</summary>
+      <p>Concepts never call each other's actions, never read or write each other's state, and never share mutable composite objects. The reaction does the reading, not a concept. The reactions are the application layer, where app-specific coupling is meant to live.</p>
+    </details>
+  </div>
+
+  <div class="check">
+    <p class="q">4. In the Google Calendar seminar story, which two concepts were joined, what went wrong, and what was Apple's fix?</p>
+    <details><summary>Show answer</summary>
+      <p>EventPlanning (deleting an event from my calendar) was tied by a reaction to Inviting (declining, and notifying the other invitees). A private act became a public message nobody intended. The fix was to make the reaction optional ("Delete and Don't Notify"), without changing either concept.</p>
+    </details>
+  </div>
+
+  <div class="check">
+    <p class="q">5. Why does Upvoting say Voter and Item rather than User and Post?</p>
+    <details><summary>Show answer</summary>
+      <p>They're generic type parameters. The concept makes no assumptions about what voters and items are, so it can be reused anywhere. The application binds them (Voter to Authenticating.User, Item to Posting's posts) and any facts it needs about them, like a post's author, are looked up in reactions.</p>
+    </details>
+  </div>
+
+  <h2>Your thoughts</h2>
+  <div id="general-note"></div>
+
+  <nav class="nextprev">
+    <a href="designing-coordination.html"><small>Previous</small>Designing coordination</a>
+    <span class="next"><small>Next · coming soon</small>Designing reactions</span>
+  </nav>
+</section>
+
+<footer class="site">
+  Slides © MIT 6.1040 staff, loaded from <a href="https://61040.github.io/fa26/">61040.github.io</a> and not copied here. Narration and notes written by Claude for personal study; not affiliated with MIT.
+</footer>
+</main>
+
+<script type="module" src="../assets/lecture.js"></script>
+</body>
+</html>
