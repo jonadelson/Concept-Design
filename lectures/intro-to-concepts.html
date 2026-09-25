@@ -1,0 +1,606 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Intro to Concepts · 6.1040</title>
+<meta name="description" content="Narrated companion to the 6.1040 Software Design lecture introducing concept design (MIT, Fall 2026).">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alegreya:wght@700&family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+</head>
+<body data-lecture="intro-to-concepts" data-pdf="https://61040.github.io/fa26/lectures/intro-to-concepts.pdf">
+
+<nav class="topbar"><div class="wrap">
+  <a href="../">← Course</a>
+  <span class="crumb">Lecture 2 · Intro to concept design</span>
+</div><div class="progress"></div></nav>
+
+<main class="wrap">
+<header class="hero">
+  <p class="kicker">Lecture 2 · Mon Sep 14</p>
+  <h1>Intro to concept design</h1>
+  <p class="lede">Daniel Jackson introduces the idea the whole course is built on. A concept is a small, reusable unit of behaviour with a purpose and an operational principle. He shows how to recognise concepts behind similar-looking buttons, how some companies were built on a single one, and how to spot a concept that is badly defined.</p>
+  <p class="meta">40 slides · a full class, roughly 80 minutes · <a href="https://61040.github.io/fa26/lectures/intro-to-concepts.pdf">original PDF</a></p>
+
+  <details class="howto">
+    <summary>How to read this page</summary>
+    <ul>
+      <li>Each slide is loaded live from the course website, and below it is what the lecturer might plausibly have said. <strong>The narration is my reconstruction, not a transcript.</strong> Where a slide is only photos, I say so instead of inventing a speech.</li>
+      <li>The coloured boxes are margin notes. Tap to open.
+        <span style="color:var(--source)">Source</span> points to where an idea comes from,
+        <span style="color:var(--industry)">In practice</span> connects it to industry,
+        <span style="color:var(--debate)">Debate</span> covers where it's contested, and
+        <span style="color:var(--you)">For you</span> is about following along as a listener.</li>
+      <li>Tap a slide to see it full screen. Use <em>＋ Add a note</em> on any slide. Notes are saved on this device only. <em>Copy notes for chat</em> collects them so you can paste them to Claude.</li>
+    </ul>
+  </details>
+</header>
+
+<!-- 1 -->
+<article class="slide" data-page="1" data-title="intro to concept design">
+  <div class="narration">
+    <p>Last time we talked about problems: how to find a situation worth improving. Today is about the unit we'll use to design solutions. It's the idea I've spent most of the last decade on, and it will run through every assignment you do this term.</p>
+  </div>
+</article>
+
+<!-- 2 -->
+<article class="slide" data-page="2" data-title="what you'll learn today">
+  <div class="narration">
+    <p>Two things today. First, what a concept actually is. Second, a claim you may find surprising: several well-known companies got where they are on the strength of a single concept.</p>
+  </div>
+</article>
+
+<!-- 3 -->
+<article class="slide" data-page="3" data-title="what is software design about?">
+  <div class="narration">
+    <p>Before concepts, a step back. What are we designing when we design software?</p>
+  </div>
+</article>
+
+<!-- 4 -->
+<article class="slide" data-page="4" data-title="designing function">
+  <div class="narration">
+    <p>Lots of people have a hand in shaping software. Visual designers decide how it looks. UX designers think about the people using it. Product managers decide what goes on the roadmap. Architects decide how the system is structured, and programmers build it.</p>
+    <p>Each of them touches the thing in the middle of this circle: what the software <em>does</em>. And yet in most organisations none of them fully owns it. The visual designer inherits the functionality. The architect is told what to support. That middle is what I mean by software design, and it's what this class is about.</p>
+  </div>
+  <details class="aside" data-kind="industry">
+    <summary><span class="tag">In practice</span><span class="tease">Who owns "what it does" where you work?</span></summary>
+    <div class="body">
+      <p>In most product companies the answer is split between a PM (who writes requirements), a designer (who draws flows) and a tech lead (who decides the data model). Each of those artefacts implies decisions about behaviour, but nobody writes the behaviour down as a thing in itself. That's the gap Jackson is pointing at.</p>
+      <p>A useful test on your own team: could anyone produce, in one page, a list of the distinct pieces of functionality your product offers and what each is for? If not, that list is what concepts are meant to give you.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 5 -->
+<article class="slide" data-page="5" data-title="Kapor's manifesto">
+  <div class="narration">
+    <p>This isn't a new complaint. Mitchell Kapor, who founded Lotus and built 1-2-3, made it decades ago:</p>
+    <blockquote>When you go to design a house you talk to an architect first, not an engineer. Why is this? Because the criteria for what makes a good building fall outside the domain of engineering. Similarly, in computer programs, the selection of the various components must be driven by the conditions of use. How is this to be done? By software designers.</blockquote>
+    <p>Look at the phrase I've put in bold: <strong>the selection of the various components</strong>. Kapor isn't talking about the colour of buttons. He's saying that choosing which pieces the software is made of is a design decision, and that it should be driven by how people will use it. That's very close to what concept design tries to do.</p>
+  </div>
+  <details class="aside" data-kind="source">
+    <summary><span class="tag">Source</span><span class="tease">Where the manifesto appeared</span></summary>
+    <div class="body">
+      <p>Kapor first gave "A Software Design Manifesto" as a talk around 1990. The 1996 date on the slide matches its reprinting as the opening chapter of Terry Winograd's edited book <em>Bringing Design to Software</em> (Addison-Wesley, 1996), which is where most people read it. The book is a good, short collection if you want the pre-concept history of this argument.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 6 -->
+<article class="slide" data-page="6" data-title="what AI cannot do">
+  <div class="narration">
+    <p>Fred Brooks put the same point more bluntly in "No Silver Bullet":</p>
+    <blockquote>The hardest single part of building a software system is deciding precisely what to build.</blockquote>
+    <p>I've titled this slide "what AI cannot do", and I want to be careful with that. AI can help you brainstorm, and it can certainly write the code once you've decided. What it can't do is make the decision for you, because the decision depends on who your users are and what situation you're trying to change. That's why this part of the job is growing in importance while the rest shrinks.</p>
+  </div>
+  <details class="aside" data-kind="source">
+    <summary><span class="tag">Source</span><span class="tease">"Essence and Accidents", and a book title</span></summary>
+    <div class="body">
+      <p>Brooks's essay (1986, reprinted in IEEE <em>Computer</em> in 1987 and in later editions of <em>The Mythical Man-Month</em>) splits difficulty into the <em>essential</em> and the <em>accidental</em>. The subtitle is on the slide. It seems likely that Jackson's book title, <em>The Essence of Software</em>, nods to this distinction, though I haven't seen him say so directly.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 7 -->
+<article class="slide" data-page="7" data-title="seeking a language of design">
+  <div class="narration">
+    <p>So if deciding what to build is the hard part, what do we need? I think we need a language for it.</p>
+    <blockquote>We live at the level of our language. Whatever we can articulate we can imagine or understand or explore.</blockquote>
+    <p>The novelist Ellen Gilchrist wrote that about life in general, and it holds for design. If all you can say about an app is "it has a login page, a feed and a settings screen", you can only think about it at that level. Programmers have a rich vocabulary for code: classes, modules, APIs. Designers of functionality have mostly had screens and user stories. Concepts are my attempt to give us better words.</p>
+  </div>
+  <details class="aside" data-kind="source">
+    <summary><span class="tag">Source</span><span class="tease">The Gilchrist quote has no citation</span></summary>
+    <div class="body"><p>The slide attributes the lines to Ellen Gilchrist, the American short-story writer, but gives no source, and I couldn't confirm which of her books or essays it comes from. Treat the exact wording as unverified.</p></div>
+  </details>
+</article>
+
+<!-- 8 -->
+<article class="slide" data-page="8" data-title="introducing concepts">
+  <div class="narration">
+    <p>Here's that language.</p>
+  </div>
+</article>
+
+<!-- 9 -->
+<article class="slide" data-page="9" data-title="what's a concept?">
+  <div class="narration">
+    <p>A concept is <strong>a realized course of action</strong>. Both halves matter, so let's take them one at a time using something familiar: inviting people to an event.</p>
+    <p>The <em>course of action</em> is the behaviour. A host makes a guest list for an occasion and invites each guest. Each guest accepts or declines, until some point after which responses are no longer accepted. That's a pattern of activity between people, and it existed long before computers.</p>
+    <p>The <em>realization</em> is whatever makes that pattern work in practice. Someone has to keep the list of guests and record who said yes. That could be a paper card on the host's fridge, a secretary with a ledger, or a database table in Evite or Google Calendar. The point in the blue bubble is that a concept can be realized in any form. Software is one form among several.</p>
+    <p>That's why concepts are useful to designers. The concept is the thing users understand, and it survives a change of medium. When you put Inviting into your app, users already know how it's supposed to go.</p>
+  </div>
+  <details class="aside" data-kind="industry">
+    <summary><span class="tag">In practice</span><span class="tease">How is a concept different from a "feature"?</span></summary>
+    <div class="body">
+      <p>A feature is usually a unit of delivery: something you put on a roadmap and ship. It can be a fragment of a concept ("let guests add a plus-one") or cut across several. A concept is a unit of <em>behaviour</em> with its own state and a purpose that makes sense by itself.</p>
+      <p>Closer analogies from engineering practice are a well-factored service or module, if its boundary is drawn around one user-meaningful activity. Most codebases don't draw boundaries that way; they draw them around data (a <code>User</code> service, an <code>Event</code> table). The lecture comes back to that in slide 17.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 10 -->
+<article class="slide" data-page="10" data-title="three key elements">
+  <div class="narration">
+    <p>To describe a concept we start with three things.</p>
+    <p>A <strong>name</strong>. I use a gerund, <em>Inviting</em>, because the concept is an activity and not an object. You'll see later why that matters.</p>
+    <p>A <strong>purpose</strong>: what the concept is for. For Inviting, it's to ensure mutual consent for participation in some engagement. The host wants you there and you want to be there. Neither side gets to decide alone.</p>
+    <p>A <strong>principle</strong>, or more fully an <em>operational principle</em>: how the concept works, told as a short typical scenario. It's the story you'd tell a friend to explain the thing. Notice it's the same text as the course of action on the last slide.</p>
+    <p>The term comes from Michael Polanyi, the Hungarian-British chemist who became a philosopher. He argued that what defines a machine is its operational principle, the account of how its parts combine to achieve its purpose. You can't find that in physics. Physics tells you how the parts behave, but not what the machine is for or how it's meant to work. I think software is the same. You can't find the concept by reading the code.</p>
+  </div>
+  <details class="aside" data-kind="source">
+    <summary><span class="tag">Source</span><span class="tease">Polanyi's operational principle</span></summary>
+    <div class="body">
+      <p>Polanyi develops the idea in <em>Personal Knowledge</em> (1958). His examples are machines like clocks, and his argument is that the operational principle belongs to the level of engineering and purpose, which can't be reduced to the physics and chemistry of the parts.</p>
+      <p>Jackson's own short explanation is the tutorial <a href="https://essenceofsoftware.com/tutorials/concept-basics/principle/">Operational principles</a> on essenceofsoftware.com, next to one on <a href="https://essenceofsoftware.com/tutorials/concept-basics/purpose/">Concept purposes</a>. Each is a few minutes' read.</p>
+    </div>
+  </details>
+  <details class="aside" data-kind="industry">
+    <summary><span class="tag">In practice</span><span class="tease">An operational principle is not a user story</span></summary>
+    <div class="body">
+      <p>They look alike, but a user story ("As a guest, I want to decline an invitation so that...") is a single want. An operational principle is a whole scenario that shows the purpose being fulfilled, including the step that makes it interesting (responses close after a deadline). It's closer to the "happy path" acceptance test you'd write for the entire capability, or a Given/When/Then that spans several actions.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 11 -->
+<article class="slide" data-page="11" data-title="a different concept: Reserving">
+  <div class="narration">
+    <p>Here's a second one, so you can see the pattern. <strong>Reserving</strong>. Its purpose is to secure future access to a scarce resource. The principle: a host makes some resources available for some occasion, a participant reserves one, and then claims it at the occasion.</p>
+    <p>It covers restaurant tables, airline seats, library study rooms, time slots at the DMV. Those are very different businesses, but it's one concept. If you've designed it well once, you've learned something that transfers to all of them.</p>
+  </div>
+</article>
+
+<!-- 12 -->
+<article class="slide" data-page="12" data-title="three more concepts">
+  <div class="narration">
+    <p>Three more. <strong>Upvoting</strong>, whose purpose is to rank items by popularity: voters upvote or downvote, and items are ranked by their votes. <strong>Rating</strong>, which shares perceived quality as numbers so offerings can be compared: raters rate on some scale, and aggregate ratings result. And <strong>Escalating</strong>, from customer service and bug tracking: an agent escalates an issue and later someone resolves it.</p>
+    <p>Look at the blue note on Escalating. Should its principle say who the escalated issue gets assigned to? No. Assigning is its own concept, with its own purpose. That's a habit you'll develop: every time something wants to creep into a concept, ask whether it's really a different concept. Keeping them separate is what lets you reuse them.</p>
+    <p>And a question for you, in green. Each of these purposes says what the concept is for. What bad situation does each one <em>prevent</em>?</p>
+  </div>
+  <details class="aside" data-kind="debate">
+    <summary><span class="tag">Debate</span><span class="tease">How small should a concept be?</span></summary>
+    <div class="body">
+      <p>Splitting Assigning out of Escalating is the same instinct as the single-responsibility principle, or as drawing a bounded context in domain-driven design. The difference is that concept design pushes it much further: a concept should make sense and be definable with no reference to any other concept. Later lectures on synchronization show how concepts are wired together without depending on each other.</p>
+      <p>The fair objection is that very fine-grained units multiply the wiring. Many engineers have lived through microservice sprawl, where the complexity moved into the connections. Whether concept design avoids that (Jackson argues the connections are simpler because they're declarative) is worth watching for when those lectures come.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 13 -->
+<article class="slide" data-page="13" data-title="including bad situations in the purpose">
+  <div class="narration">
+    <p>Here are some answers. For Inviting, the purpose now ends with <strong>prevents unwanted participation</strong>. Without invitations, anyone could just turn up, or a host could put you down as attending without asking. Upvoting <strong>prevents being overwhelmed with low quality items</strong>, since you see the best first. Rating <strong>prevents inability to select between similar offerings</strong>: faced with forty near-identical phone chargers, you'd have no way to choose.</p>
+    <p>Why add this? Because "rank items by popularity" can sound like an end in itself, and it isn't. The "prevents" clause ties the concept back to a problem a real person has, which is where last lecture left us. It also gives you a test. If you can't name the bad situation a concept prevents, you should ask whether it's needed at all.</p>
+  </div>
+  <details class="aside" data-kind="industry">
+    <summary><span class="tag">In practice</span><span class="tease">The "prevents" clause is a failure mode you design against</span></summary>
+    <div class="body">
+      <p>Engineers already think this way about reliability and security: you name the failure or threat, then design so it can't happen. The prevents clause applies the same move to functionality. "Prevents unwanted participation" tells you immediately that an invite link anyone can forward would undermine the concept, which is a real design argument about, for example, calendar invites and meeting links.</p>
+      <p>The course's E2 uses this form throughout. PasswordAuthenticating is written as "identify users; prevent one user from masquerading as another".</p>
+    </div>
+  </details>
+</article>
+
+<!-- 14 -->
+<article class="slide" data-page="14" data-title="concepts &amp; conceptual models">
+  <div class="narration">
+    <p>Now let me connect this to an older idea you may have met in HCI.</p>
+  </div>
+</article>
+
+<!-- 15 -->
+<article class="slide" data-page="15" data-title="designer's model, user's model">
+  <div class="narration">
+    <p>This picture is Don Norman's. At the bottom, the designer has a model in their head of how the system works, and they build the system from it. At the top, the user forms their own model, but they never see the designer's. All they have is what the user interface shows them, which Norman called the <em>system image</em>.</p>
+    <p>Usability, on this view, depends on the user's model matching the designer's closely enough. When they diverge, users do things that make sense to them and get results that make no sense.</p>
+    <p>Concepts give a precise answer to a question Norman left fairly open: what are these models made of? My answer is that they're made of concepts. If the designer's model is a clear set of concepts, and the interface projects them faithfully, users can pick them up.</p>
+  </div>
+</article>
+
+<!-- 16 -->
+<article class="slide" data-page="16" data-title="Donald Norman">
+  <div class="narration">
+    <p>This is from Norman's <em>The Design of Everyday Things</em>, first published in 1988, in the 2013 revision:</p>
+    <blockquote>When the designers fail to provide a conceptual model, we will be forced to make up our own, and the ones we make up are apt to be wrong. Conceptual models are critical to good design.</blockquote>
+    <p>"Forced to make up our own" is the important part. Users always build a model. The only question is whether you gave them a good one to build.</p>
+  </div>
+  <details class="aside" data-kind="source">
+    <summary><span class="tag">Source</span><span class="tease">Norman's three models, and the teapot</span></summary>
+    <div class="body">
+      <p>The 1988 edition was titled <em>The Psychology of Everyday Things</em>; it was renamed for the paperback, and substantially revised in 2013. Norman's diagram has three parts: the designer's model, the user's model, and the system image between them. The red teapot on the cover is Jacques Carelman's "coffeepot for masochists", with the spout on the same side as the handle.</p>
+      <p>Jackson's own framing of the link is in the essenceofsoftware.com tutorial <a href="https://essenceofsoftware.com/tutorials/design-general/beyond-ui/">Beyond the user interface</a>.</p>
+    </div>
+  </details>
+  <details class="aside" data-kind="debate">
+    <summary><span class="tag">Debate</span><span class="tease">Should the interface show the model, or hide it?</span></summary>
+    <div class="body">
+      <p>One school of UX says users shouldn't need a model at all: make it obvious in the moment and let the system do the thinking. Norman's line, and Jackson's, is that you can't avoid it. People will form a model anyway, and a hidden one just gets guessed wrong. Git is the usual example engineers reach for. Jackson and his student Santiago Perez De Rosso published critiques of Git's conceptual design around 2013 to 2016, arguing that its confusing concepts, not its command syntax, are the root problem.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 17 -->
+<article class="slide" data-page="17" data-title="what are the concepts in conceptual models?">
+  <div class="narration">
+    <p>People already use the word "concept" loosely: "the concept of a restaurant reservation", "the concept of a friend on Facebook", "the concept of a password". They're pointing at the right thing, but they're naming an object.</p>
+    <p>A conceptual model is about behaviour. So the concepts are Reserving, Friending, PasswordAuthenticating.</p>
+    <p>This is the single most common mistake people make with concepts, so I'll say it plainly: <strong>the object is not the concept</strong>. A restaurant reservation is a small part of the Reserving concept. The concept is the whole course of action: making tables available, reserving one, claiming it or not showing up. It also includes the relationships that action creates, like the fact that this reservation is for this table and was made by this person.</p>
+  </div>
+  <details class="aside" data-kind="industry">
+    <summary><span class="tag">In practice</span><span class="tease">Why this cuts against object-oriented habits</span></summary>
+    <div class="body">
+      <p>Most of us learned to model a domain by finding the nouns: <code>Reservation</code>, <code>User</code>, <code>Table</code>, each a class with fields. The course's guide <a href="https://61040.github.io/fa26/background/defining-concepts/">How to define a concept</a> says outright that object orientation is "the source of confusion". Its example is a person's name: it isn't a property the person "carries", it's something a Naming activity assigns and maintains.</p>
+      <p>In practice this means a <code>users</code> table with twenty columns is usually several concepts' state (authentication, profile, notification preferences, and so on) bundled together because they share a key. That bundling is why changing one of them tends to break another.</p>
+    </div>
+  </details>
+  <details class="aside" data-kind="debate">
+    <summary><span class="tag">Debate</span><span class="tease">Isn't this just DDD bounded contexts?</span></summary>
+    <div class="body">
+      <p>There's real overlap. Eric Evans's <em>Domain-Driven Design</em> (2003) also says that the same noun means different things in different parts of a system, and that "Customer" in billing and "Customer" in shipping should be separate models. That's close to saying a user has one face in each concept.</p>
+      <p>Two differences are worth noting. Bounded contexts are usually large, often one per team, while concepts are small and generic (Reserving, Upvoting). And DDD stays organised around entities and aggregates inside each context, whereas concept design organises around the activity. The class guide says concept design is "consistent with" DDD, which is a fair description.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 18 -->
+<article class="slide" data-page="18" data-title="recognizing concepts">
+  <div class="narration">
+    <p>Once you know what a concept is, you start to see them. Let's practise.</p>
+  </div>
+</article>
+
+<!-- 19 -->
+<article class="slide" data-page="19" data-title="similar UIs, very different concepts">
+  <div class="narration">
+    <p>Three thumbs-up buttons, more or less. On the left is a Q&amp;A site with up and down arrows and a score of 8 (on, you'll notice, a question about Alloy). In the middle is a message with a thumbs-up reaction. On the right, a Netflix show with a thumbs-up button.</p>
+    <p>They look the same, and they're three different concepts. <strong>Upvoting</strong> ranks items by popularity: the votes decide what appears first. <strong>Reacting</strong> shares your response with others: the reactions are just displayed, often as counts. <strong>Recommending</strong> uses what you liked to decide what to show you next: your thumbs on Netflix say nothing to anyone else.</p>
+    <p>This is why the interface alone can't tell you what the software does. The same visual element can carry quite different behaviour, and users have to guess which one it is.</p>
+  </div>
+</article>
+
+<!-- 20 -->
+<article class="slide" data-page="20" data-title="what's going on in Facebook reactions?">
+  <div class="narration">
+    <p>Now a real case. Facebook's row of reactions: like, love, care, haha, wow, sad, angry. Which concept is at play? Upvoting, Reacting, or Recommending? Scan the code and vote.</p>
+    <p>Most people's first answer is Reacting. You're telling your friend how you feel about their post. The interface certainly suggests that. Hold that answer for a moment.</p>
+  </div>
+  <details class="aside" data-kind="you">
+    <summary><span class="tag">For you</span><span class="tease">Vote before you scroll</span></summary>
+    <div class="body"><p>The join link is for enrolled students, so put your answer in the note box below before reading the next slide. Say which concept you'd pick and why. It's worth noticing what evidence you used, since all you have is the interface.</p></div>
+  </details>
+</article>
+
+<!-- 21 -->
+<article class="slide" data-page="21" data-title="five points for anger">
+  <div class="narration">
+    <p>Here's what was going on underneath. In 2021 the Washington Post reported, from internal documents, that Facebook's feed-ranking algorithm had given emoji reactions five times the weight of a plain "like". A reaction was also a vote. Posts that provoked strong reactions, including anger, got shown to more people. Employees later concluded the result was more "toxicity".</p>
+    <p>The headlines focus on anger. My note on the slide is a correction to that framing: the reporting was true, but <em>all</em> the emoji reactions were weighted equally. Anger wasn't singled out. The real design problem was that users thought they were using Reacting when they were also taking part in Upvoting and Recommending. The concepts were fused, and the interface showed only one of them.</p>
+  </div>
+  <details class="aside" data-kind="source">
+    <summary><span class="tag">Source</span><span class="tease">The Washington Post story</span></summary>
+    <div class="body">
+      <p>The left headline is from the Washington Post (October 2021), "Five points for anger, one for a 'like': How Facebook's formula fostered rage and misinformation", based on the internal documents released by Frances Haugen. As I recall the reporting, Facebook later reduced the weight of reactions and eventually set "angry" to zero, but I haven't rechecked those details, so treat them as approximate.</p>
+      <p>I couldn't identify the publication of the second headline on the slide.</p>
+    </div>
+  </details>
+  <details class="aside" data-kind="industry">
+    <summary><span class="tag">In practice</span><span class="tease">Reusing a signal for a second purpose</span></summary>
+    <div class="body">
+      <p>This pattern is common and usually well-intentioned: you have an engagement signal already, so you feed it into ranking. The concept lens makes the cost visible. The moment a reaction affects ranking, users' social gesture has consequences they didn't choose, and people who learn how it works start to game it. If you do fuse two concepts, the design question is whether users can tell.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 22 -->
+<article class="slide" data-page="22" data-title="Melania Trump liked your tweet">
+  <div class="narration">
+    <p>Another one. In May 2017, a commentator tweeted a joke suggesting that the only wall Donald Trump had built was between him and his wife. Shortly afterwards he got a notification: Melania Trump's account had liked it.</p>
+    <p>It made headlines, because it looked like the First Lady publicly endorsing a joke at her husband's expense. That's very unlikely to be what she meant.</p>
+  </div>
+</article>
+
+<!-- 23 -->
+<article class="slide" data-page="23" data-title="what concept is this?">
+  <div class="narration">
+    <p>So what concept was she using when she tapped that heart? There are two candidates. <strong>Reacting</strong>, whose purpose is to share reactions to an item, and which is public. Or <strong>Bookmarking</strong>, whose purpose is to save items to revisit later, and which is private.</p>
+    <p>Twitter's heart was Reacting. The likes were public and generated a notification. But plenty of people used it as a bookmark, a way to keep a tweet they wanted to come back to. The most plausible reading is that she, or whoever ran the account, did exactly that.</p>
+  </div>
+</article>
+
+<!-- 24 -->
+<article class="slide" data-page="24" data-title="Reacting vs. Bookmarking on Twitter">
+  <div class="narration">
+    <p>Here's how the two looked on Twitter later, once a real bookmark existed. On the left, the heart, right there in the row under every tweet. On the right, to bookmark you had to open the share menu and find "Add Tweet to Bookmarks" among options for messaging and copying links.</p>
+    <p>The public concept is one tap away. The private one is hidden in a menu. That's a design choice, and it's one users pay for.</p>
+  </div>
+  <details class="aside" data-kind="debate">
+    <summary><span class="tag">Debate</span><span class="tease">Confusion by accident, or by design?</span></summary>
+    <div class="body">
+      <p>The course's own <a href="https://61040.github.io/fa26/assignments/e2/">E2 assignment</a> tells this story and raises the uncomfortable possibility: "it seems possible that the confusion was intentional, since public likes, unlike private bookmarks, serve the company's business goals of increasing visible user engagement". It then adds that bookmarking stayed "far harder to access" even after it was added.</p>
+      <p>That's a hypothesis, not a finding. But it connects concept design to the "dark patterns" literature: sometimes a muddled concept is profitable, which is part of why it persists.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 25 -->
+<article class="slide" data-page="25" data-title="Twitter: star to heart">
+  <div class="narration">
+    <p>Go back a couple of years. In November 2015, Twitter replaced the favorite star with a heart and renamed it "like". The press release said:</p>
+    <blockquote>We are changing our star icon for favorites to a heart and we'll be calling them likes… We know that at times the star could be confusing, especially to newcomers. You might like a lot of things, but not everything can be your favorite.</blockquote>
+    <p>Discuss with your neighbour: why did Twitter say this? What was confusing about the star?</p>
+    <p>My reading is that they'd noticed the confusion between two concepts and fixed the wrong thing. A star suggests saving something, which is Bookmarking. Changing the icon to a heart made the Reacting meaning clearer, but it didn't give the bookmarkers anywhere to go. They kept using the heart, now with a stronger public meaning. A dedicated bookmark feature only arrived in 2018, after the Melania episode.</p>
+  </div>
+  <details class="aside" data-kind="you">
+    <summary><span class="tag">For you</span><span class="tease">Try this on an app you use daily</span></summary>
+    <div class="body">
+      <p>Pick one button in something you use every day (Slack's emoji reactions, GitHub's star, a "save" icon somewhere) and write down which concept it really belongs to and what its purpose is. GitHub's star is a good one: it's a bookmark for you, a popularity signal for everyone else, and it affects discovery. Put your answer in a note and paste it to me.</p>
+      <p>This is also a warm-up for E2's third exercise, which asks you to compare two concepts that look alike.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 26 -->
+<article class="slide" data-page="26" data-title="concepts are inventions">
+  <div class="narration">
+    <p>So far we've looked at concepts as things to recognise. But someone had to come up with each of them. Concepts are inventions.</p>
+  </div>
+  <details class="aside" data-kind="debate">
+    <summary><span class="tag">Debate</span><span class="tease">Invented, or discovered in the domain?</span></summary>
+    <div class="body">
+      <p>Domain-driven design tends to treat the model as something you <em>discover</em> by talking to domain experts and adopting their "ubiquitous language". Jackson's emphasis is different: many important concepts didn't exist in anyone's domain before someone invented them. Nobody in the conference-calling domain was asking for a joinable link.</p>
+      <p>Both views have a place. Reserving was out in the world long before software; SelfJoining wasn't. A practical takeaway is that interviewing users tells you about the problem, but it won't necessarily hand you the concept.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 27 -->
+<article class="slide" data-page="27" data-title="zoom's key concept">
+  <div class="narration">
+    <p>Here's Zoom's. I call it <strong>SelfJoining</strong>. The purpose is to let participants in an event join by themselves, and it prevents the host having to add people one by one. The principle: a host creates a link to an event and shares it, and anyone who receives the link can join using it.</p>
+    <p>It sounds trivial now. Compare it to the older model on Skype, where you had to be in someone's contacts and the host called you in. Zoom's link turned a meeting into something that works like a place: you give out the address and people show up.</p>
+  </div>
+</article>
+
+<!-- 28 -->
+<article class="slide" data-page="28" data-title="tracing zoom's self-joining concept">
+  <div class="narration">
+    <p>But Zoom didn't invent it either. Here's a rough family tree. Skype started as peer-to-peer calling in 2003 and was bought by Microsoft. FaceTime arrived in 2010. Google's Hangouts went through several incarnations and eventually became Meet. Zoom was founded by Eric Yuan and launched in 2013.</p>
+    <p>The arrows are the interesting part. The self-joining link appears to have come from Join.me, a LogMeIn product from 2010, and Zoom adopted it. Then it spread back out: Skype added it in April 2020, which is when everyone was suddenly on video calls, and Teams added it around June 2022.</p>
+    <p>So the concept moved between products. That's the thing about concepts: once one exists, anyone can reuse it. And the company that gets it right first can build a lot on it.</p>
+  </div>
+  <details class="aside" data-kind="debate">
+    <summary><span class="tag">Debate</span><span class="tease">Did one concept really make Zoom?</span></summary>
+    <div class="body">
+      <p>Zoom's rise also had a lot to do with call quality on bad connections, a generous free tier, and not needing an account to join. Those last two arguably belong to the same concept: SelfJoining works because the person with the link doesn't have to register first.</p>
+      <p>The dates on this slide are the lecturer's. I haven't checked the Join.me lineage or the exact months for Skype and Teams, and "Meet Now" style links existed in various products earlier than their wide rollout, so read the arrows as the gist.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 29 -->
+<article class="slide" data-page="29" data-title="Schindler's PORT elevator">
+  <div class="narration">
+    <p>A concept from outside software. In some newer office buildings you don't press "up". You tap your destination floor on a panel in the lobby, and it tells you which elevator to wait for. This is <strong>DestinationDispatching</strong>. The principle: a rider selects a destination floor, is told to wait at a given bank, takes the first car that arrives there, and it eventually stops at their floor.</p>
+    <p>What's the purpose? Take a guess before I reveal it. It's to improve elevator utilization, and it prevents needless stops when some elevators are idle. If the system knows where everyone is going before they get in, it can group people going to nearby floors instead of having every car stop everywhere.</p>
+    <p>Notice the blue note. This concept demanded a real change in behaviour. Riders had to unlearn a habit that has been the same for a century, and many people are confused the first time they meet one. It worked anyway because the purpose was valuable enough.</p>
+  </div>
+  <details class="aside" data-kind="industry">
+    <summary><span class="tag">In practice</span><span class="tease">A concept that moves work to the moment of intent</span></summary>
+    <div class="body">
+      <p>The engineering trick in destination dispatch is collecting the request earlier, at the point where the user knows their intent, so the scheduler has more information. Software engineers will recognise it as batching with foreknowledge: the same move as asking for a delivery window at checkout instead of when the truck is outside. The cost is that users have to learn a new principle, and a concept whose principle nobody explains will fail however good its purpose.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 30 -->
+<article class="slide" data-page="30" data-title="Schindler's PORT: the marketing">
+  <div class="narration">
+    <p>This is how Schindler sells it. Better traffic performance, easier operation with a card, personalised service (longer door times, a VIP trip), and building security.</p>
+    <p>That's a list of four benefits, and it's typical of marketing. Only the first one is the concept's purpose. The others are what you get when you combine DestinationDispatching with other concepts like access control. Learning to separate the core concept from what's been bundled around it is part of reading a design.</p>
+  </div>
+</article>
+
+<!-- 31 -->
+<article class="slide" data-page="31" data-title="history of destination dispatch">
+  <div class="narration">
+    <p>The history is a nice example of how long a concept can wait. Leo Port, an electrical engineer in Sydney, patented destination dispatch in 1961. It wasn't built, and he let the patent lapse in 1977. Schindler's Miconic 10, in 1992, was the first commercial implementation. The PORT system came in 2009, and the name is an acronym, "Personal Occupant Requirement Terminal", that happens to honour the inventor.</p>
+    <p>Thirty years from patent to product. The concept was sound. What it needed was cheap computing to run the scheduling.</p>
+  </div>
+</article>
+
+<!-- 32 -->
+<article class="slide" data-page="32" data-title="mutual matching (puzzle)">
+  <div class="narration">
+    <p>Here's a concept from the dating world. The principle: two people are introduced as a potential match. Each can accept or reject. If both accept, the match succeeds.</p>
+    <p>It was invented, as far as anyone can tell, for speed dating, which Rabbi Yaacov Deyo came up with in 1998 as a way for Jewish singles to meet. You had seven or eight minute dates and marked yes or no on a card afterwards. The idea spread very fast.</p>
+    <p>I've left the purpose blank. What's it for, and what does it prevent? Think about why you'd mark a card afterwards instead of just asking the person.</p>
+  </div>
+</article>
+
+<!-- 33 -->
+<article class="slide" data-page="33" data-title="mutual matching">
+  <div class="narration">
+    <p>The purpose is to let two people decide if they match without knowing the other's decision, and it <strong>prevents the humiliation of rejection</strong>. If you said yes and they said no, you never find out. The only thing either of you learns is whether it's mutual.</p>
+    <p>That's the concept behind Tinder's swipe. The swipe is the interface. The concept is that nobody sees a one-sided yes.</p>
+  </div>
+</article>
+
+<!-- 34 -->
+<article class="slide" data-page="34" data-title="reciprocal reviewing">
+  <div class="narration">
+    <p>A related concept with the same structural trick. <strong>ReciprocalReviewing</strong>: after an interaction between two parties, both are invited to review each other, and neither review becomes visible until both have been written or a deadline has passed. The purpose is to let parties review each other independently, and it prevents pressure or retaliation.</p>
+    <p>Airbnb had mutual reviews from launch in 2008, but you could see the host's review before writing yours. So guests held back criticism for fear of a bad review in return, and hosts did the same. In 2014 they added the blinding. Ratings went down, and more for low-quality listings, which is what you'd hope. And more people left reviews.</p>
+    <p>That one change, hiding the review until both were in, made the ratings more honest. It's a small concept with large effects.</p>
+  </div>
+  <details class="aside" data-kind="source">
+    <summary><span class="tag">Source</span><span class="tease">The Airbnb experiment</span></summary>
+    <div class="body">
+      <p>Airbnb ran the change as a field experiment before rolling it out. It was studied by Andrey Fradkin, Elena Grewal and David Holtz in a paper usually cited as "Reciprocity and Unveiling in Two-Sided Reputation Systems: Evidence from an Experiment on Airbnb" (<em>Marketing Science</em>, 2021). The effects they report are real but modest in size; the slide's summary is a fair gist.</p>
+    </div>
+  </details>
+  <details class="aside" data-kind="industry">
+    <summary><span class="tag">In practice</span><span class="tease">eBay took the other route</span></summary>
+    <div class="body">
+      <p>eBay faced the same retaliation problem with buyer and seller feedback. Its fix, in 2008, was to stop sellers leaving negative feedback about buyers. That removes retaliation by removing one side of the concept. Airbnb kept both sides and changed the timing. Comparing the two is a good example of a design choice at the level of concepts, with no UI involved.</p>
+      <p>The same blind-until-both-submit shape shows up in engineering too: sealed-bid auctions, and some code-review or planning-poker setups where estimates are revealed together to prevent anchoring.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 35 -->
+<article class="slide" data-page="35" data-title="concepts that made companies">
+  <div class="narration">
+    <p>Which brings me to the second promise from the start of the lecture.</p>
+  </div>
+</article>
+
+<!-- 36 -->
+<article class="slide" data-page="36" data-title="core concepts &amp; the companies they made">
+  <div class="narration">
+    <p>Here are eight companies, each with the concept I'd say it was built on. Zoom and SelfJoining. Calendly and <strong>SelfScheduling</strong>, where you share a link and the other person picks a free slot. Tinder and MutualMatching. Snapchat and <strong>Expiring</strong>, messages that disappear. Pinterest and <strong>Pinning</strong>, saving images from anywhere onto boards. Dropbox and <strong>Syncing</strong>, a folder that's the same on every machine. Adobe Photoshop and <strong>Layering</strong>. Google and <strong>PageRanking</strong>, ranking pages by the links pointing to them.</p>
+    <p>None of these companies had one concept only. But in each case a single concept was the thing they did first or best, and it's what people remember. Notice that none of them is a technology in the usual sense. They're ideas about behaviour. That's the kind of invention you'll be trying to make in your projects.</p>
+  </div>
+  <details class="aside" data-kind="debate">
+    <summary><span class="tag">Debate</span><span class="tease">Survivorship, and what else it took</span></summary>
+    <div class="body">
+      <p>This is a list of winners, so it can't show that a good concept is enough. Plenty of products had good concepts and failed on execution, timing or distribution. Dropbox wasn't the first sync product; it was the first where syncing reliably worked. PageRank was a technical achievement as much as a concept.</p>
+      <p>A fairer reading of the claim is narrower: in these cases the core concept is what gave the product its identity, and competitors ended up copying the concept. That's consistent with slide 28.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 37 -->
+<article class="slide" data-page="37" data-title="spotting concept flaws">
+  <div class="narration">
+    <p>Last section. Writing concepts well takes practice, so let's look at some that go wrong.</p>
+  </div>
+</article>
+
+<!-- 38 -->
+<article class="slide" data-page="38" data-title="spotting concept flaws">
+  <div class="narration">
+    <p>Three concepts, each with at least one flaw. And four kinds of flaw in red: the purpose doesn't explain why; the purpose is actually two purposes; the principle is not a course of action; the principle doesn't fulfil the purpose. Match them up.</p>
+    <p><strong>ChoreAssigning</strong> says its purpose is to allocate chores fairly and prevent uneven burden. Its principle is that chores are assigned to members and marked complete when done. Nothing in that scenario makes the allocation fair. Someone could assign every chore to the same person, and the principle would be satisfied. <em>The principle doesn't fulfil the purpose.</em></p>
+    <p><strong>Preregistering</strong> wants to collect information about demand for resource planning <em>and</em> prioritise the most enthusiastic students with waitlists. Those are different goals, served by different mechanisms, and they may even conflict. <em>The purpose is two purposes</em>, which usually means two concepts.</p>
+    <p><strong>Playlisting</strong> has both remaining flaws. Its purpose, "let listeners select songs and then play them in the selected order", just restates the mechanism. It doesn't say why anyone would want that. And its principle, "a playlist consists of an ordered sequence of songs", describes a data structure. There's no story of someone doing something and getting a result.</p>
+  </div>
+  <details class="aside" data-kind="you">
+    <summary><span class="tag">For you</span><span class="tease">Fix one before reading my version</span></summary>
+    <div class="body">
+      <p>The slide lists the four flaws without saying which goes with which concept; the matching above is my reading. Try rewriting Playlisting yourself in the note box: a purpose that says what it's for (a party? a workout? sharing taste with a friend?) and a principle that's a scenario. Your choice of purpose will change the concept, which is the lesson.</p>
+      <p>If you want more, <a href="https://61040.github.io/fa26/assignments/e2/">E2</a> is the exercise that follows this lecture. Its first part (reading the GiftRegistering concept and answering questions) is a good self-test. The course asks students to do it without an LLM, and that advice fits you too: paste me your answers afterwards and I'll critique them.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 39 -->
+<article class="slide" data-page="39" data-title="parting thought">
+  <div class="narration">
+    <p>One parting thought.</p>
+  </div>
+</article>
+
+<!-- 40 -->
+<article class="slide" data-page="40" data-title="the URL">
+  <div class="narration">
+    <p>Tim Berners-Lee was asked in 1999 what was new about the web. He said:</p>
+    <blockquote>Well, the most important thing that was new was the idea of URI — or URL.</blockquote>
+    <p>Not HTML, not HTTP. The URL. Two questions to leave you with. Why was the URL the key concept in the invention of the web? And why does Berners-Lee now think it's under threat?</p>
+    <p>I'll leave them open. But notice it's the same shape as Zoom's link: a name for a thing that anyone can pass on, and that anyone holding it can use.</p>
+  </div>
+  <details class="aside" data-kind="source">
+    <summary><span class="tag">Source</span><span class="tease">Some starting points for the two questions</span></summary>
+    <div class="body">
+      <p>The quote is attributed on the slide to a 1999 <em>Wired</em> interview, which I haven't located to check. Berners-Lee's own account of the web's design is his book <em>Weaving the Web</em> (1999).</p>
+      <p>On the threat: over the past decade or so he has argued repeatedly that the web is being centralised into a few platforms, with content locked inside apps and feeds that you can't link to. His Solid project is an attempt to give people control of their own data. Whether that's exactly the point Jackson had in mind, the slide doesn't say.</p>
+    </div>
+  </details>
+</article>
+
+<section>
+  <h2>Check yourself</h2>
+  <p class="meta">Try answering in your head, or in the note box at the bottom, before opening each answer.</p>
+
+  <div class="check">
+    <p class="q">1. What are the two halves of "a realized course of action", and why does it matter that a concept can be realized without software?</p>
+    <details><summary>Show answer</summary>
+      <p>The course of action is the behaviour people take part in (a host invites, guests accept or decline). The realization is whatever keeps track of it (a list and the responses). Because the same concept can live on paper or in an app, users can bring their understanding from one medium to another, and designers can reuse a concept across products.</p>
+    </details>
+  </div>
+
+  <div class="check">
+    <p class="q">2. Write an outline (name, purpose with a "prevents" clause, principle) for the concept behind Calendly.</p>
+    <details><summary>Show answer</summary>
+      <p>One version. <strong>SelfScheduling</strong>. Purpose: let people book time with you without back-and-forth; prevents the long email exchange over free slots. Principle: an owner publishes their availability as a link; someone with the link picks a free slot, which is then booked and no longer offered to others. Your wording will differ; check that the principle is a scenario and that it actually achieves the purpose.</p>
+    </details>
+  </div>
+
+  <div class="check">
+    <p class="q">3. A colleague says "our app has a Reservation concept, it's this table". What's wrong with that?</p>
+    <details><summary>Show answer</summary>
+      <p>The object is not the concept. A reservation record is a small part of the Reserving concept, which is the whole course of action (make resources available, reserve, claim or not show up) plus the relationships it creates. Naming concepts with gerunds is a reminder of that.</p>
+    </details>
+  </div>
+
+  <div class="check">
+    <p class="q">4. Facebook reactions look like Reacting. What else were they, and why is that a design problem even if the ranking effect were harmless?</p>
+    <details><summary>Show answer</summary>
+      <p>They also acted as Upvoting (and fed Recommending), because reactions were weighted in feed ranking. The problem is that users' model contains only Reacting, so their gestures have effects they didn't intend and can't see. That's a mismatch between the designer's model and the user's model, in Norman's terms.</p>
+    </details>
+  </div>
+
+  <div class="check">
+    <p class="q">5. What do MutualMatching and ReciprocalReviewing have in common, and what bad situation does the shared trick prevent in each?</p>
+    <details><summary>Show answer</summary>
+      <p>Both hide each party's decision from the other until both have acted (or a deadline passes). In MutualMatching it prevents the humiliation of a one-sided rejection. In ReciprocalReviewing it prevents pressure and retaliation, so reviews are more honest.</p>
+    </details>
+  </div>
+
+  <div class="check">
+    <p class="q">6. What's wrong with "purpose: let listeners select songs and then play them in the selected order"?</p>
+    <details><summary>Show answer</summary>
+      <p>It restates the mechanism instead of saying why anyone wants it, so it gives no basis for judging the design. A real purpose (for example, curating music for an occasion so you don't have to choose each track while it's happening) would tell you which features matter.</p>
+    </details>
+  </div>
+
+  <h2>Your thoughts</h2>
+  <div id="general-note"></div>
+
+  <nav class="nextprev">
+    <a href="how-to-innovate.html"><small>Previous</small>How to innovate</a>
+    <a class="next" href="designing-a-concept.html"><small>Next</small>Designing a concept</a>
+  </nav>
+</section>
+
+<footer class="site">
+  Slides © MIT 6.1040 staff, loaded from <a href="https://61040.github.io/fa26/">61040.github.io</a> and not copied here. Narration and notes written by Claude for personal study; not affiliated with MIT.
+</footer>
+</main>
+
+<script type="module" src="../assets/lecture.js"></script>
+</body>
+</html>

@@ -1,0 +1,688 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>How to Innovate · 6.1040</title>
+<meta name="description" content="Narrated companion to the second half of the first 6.1040 Software Design lecture (MIT, Fall 2026): starting from bad situations instead of needs and wants.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alegreya:wght@700&family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+</head>
+<body data-lecture="how-to-innovate" data-pdf="https://61040.github.io/fa26/lectures/how-to-innovate-no-builds.pdf">
+
+<nav class="topbar"><div class="wrap">
+  <a href="../">← Course</a>
+  <span class="crumb">Lecture 1 · How to innovate</span>
+</div><div class="progress"></div></nav>
+
+<main class="wrap">
+<header class="hero">
+  <p class="kicker">Lecture 1, part two · Wed Sep 9</p>
+  <h1>How to innovate</h1>
+  <p class="lede">Daniel Jackson argues that asking people what they want or need is a weak place to start a project. A better start is a bad situation people are already in. He works through Zoom, the iPod, a wine pump and a backup tool, then shows the ways promising ideas die anyway.</p>
+  <p class="meta">48 slides · about 55 minutes of class time · <a href="https://61040.github.io/fa26/lectures/how-to-innovate-no-builds.pdf">original PDF</a></p>
+
+  <details class="howto">
+    <summary>How to read this page</summary>
+    <ul>
+      <li>Each slide is loaded live from the course website, and below it is what the lecturer might plausibly have said. <strong>The narration is my reconstruction, not a transcript.</strong> Where a slide is only a picture, I describe it instead of inventing a speech.</li>
+      <li>The coloured boxes are margin notes. Tap to open.
+        <span style="color:var(--source)">Source</span> points to where an idea comes from,
+        <span style="color:var(--industry)">In practice</span> connects it to industry,
+        <span style="color:var(--debate)">Debate</span> covers where it's contested, and
+        <span style="color:var(--you)">For you</span> is about following along as a listener.</li>
+      <li>Tap a slide to see it full screen. Use <em>＋ Add a note</em> on any slide. Notes are saved on this device only. <em>Copy notes for chat</em> collects them so you can paste them to Claude.</li>
+    </ul>
+  </details>
+</header>
+
+<!-- 1 -->
+<article class="slide" data-page="1" data-title="how to innovate">
+  <div class="narration">
+    <p>Welcome back. In the first half we talked about the class. Now we'll get into the first real piece of content, and it comes before any design at all: how you pick the problem you're going to work on.</p>
+  </div>
+  <details class="aside" data-kind="source">
+    <summary><span class="tag">Source</span><span class="tease">The written version of this lecture</span></summary>
+    <div class="body">
+      <p>The course has a background note, <a href="https://61040.github.io/fa26/background/how-to-innovate-from-bad-situations/">How to innovate from bad situations</a>, that covers the same argument in prose. It's about a fifteen-minute read and it's the document E1 points to. Several things below (the Zoom and iPod analyses, the list of evaluation criteria) are taken from it rather than guessed from the slides.</p>
+      <p>Its acknowledgment says the ideas are "largely due to Merrick Furst", whose book appears on slide 12.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 2 -->
+<article class="slide" data-page="2" data-title="the key to successful innovation">
+  <div class="narration">
+    <p>Here's the promise for today. There's one thing you can do at the very start of a project that makes it much more likely to succeed. It won't guarantee anything. But most of the projects that fail were in trouble from their first week, because of where they started, and no amount of good engineering later could rescue them.</p>
+    <p>I'll hold off telling you what the one thing is for a few minutes.</p>
+  </div>
+</article>
+
+<!-- 3 -->
+<article class="slide" data-page="3" data-title="what success looks like">
+  <div class="narration">
+    <p>First, let's look at what success actually looks like.</p>
+  </div>
+</article>
+
+<!-- 4 -->
+<article class="slide" data-page="4" data-title="Skype registered users">
+  <div class="narration">
+    <p>This is a chart of Skype's registered users, from Statista. It climbs steadily from 2009 to 2024, past two billion. The red box marks the years that are estimates, 2018 onward.</p>
+    <p>If you only had this chart, you'd say Skype was thriving. It wasn't. Registered accounts only go up; nobody deletes their Skype account, they just stop opening it. So a number that looks like success can hide a product that people had already quietly left. Keep that in mind when we get to the next slide.</p>
+  </div>
+  <details class="aside" data-kind="industry">
+    <summary><span class="tag">In practice</span><span class="tease">Vanity metrics, and how the story ended</span></summary>
+    <div class="body">
+      <p>Cumulative sign-ups are the textbook vanity metric. Active users (daily, weekly, monthly) and retention cohorts are what product teams actually watch, precisely because a total can only grow.</p>
+      <p>Microsoft retired Skype in May 2025 and moved its users to Teams. So the right-hand end of this chart is an estimate of accounts for a product that was about to be switched off.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 5 -->
+<article class="slide" data-page="5" data-title="Zoom in 2020">
+  <div class="narration">
+    <p>And this is what success looks like when it happens. It's a Bloomberg Opinion chart of daily app downloads for video meeting apps in March and April 2020. The pandemic is declared, marked in red on the axis, and one line takes off. That's Zoom, peaking around three million downloads a day. Microsoft Teams, Google Meet, Houseparty, Skype and the rest sit in a tangle near the bottom.</p>
+    <p>Skype had been around for well over a decade. It had the brand, the accounts, and Microsoft behind it. When the moment came that everyone suddenly needed video calls, people went to Zoom. We'll come back to why, because the reason is small and specific, and it's the whole lesson of today in one example.</p>
+  </div>
+</article>
+
+<!-- 6 -->
+<article class="slide" data-page="6" data-title="want or need?">
+  <div class="narration">
+    <p>So how do you find a problem worth solving? The standard answer is: find out what people want, or what they need.</p>
+  </div>
+</article>
+
+<!-- 7 -->
+<article class="slide" data-page="7" data-title="make something people want">
+  <div class="narration">
+    <p>This is the most famous version of that advice. "Make something people want" is Y Combinator's motto. Paul Graham came up with it in 2005, around when YC started, and this poster of it (designed by Rudy Adler) hung in their office.</p>
+    <p>It's good advice as far as it goes. It pushes founders away from building things only they find interesting. But notice that it doesn't tell you how to find out what people want.</p>
+  </div>
+  <details class="aside" data-kind="source">
+    <summary><span class="tag">Source</span><span class="tease">What Graham's "Be Good" essay adds</span></summary>
+    <div class="body">
+      <p>The slide cites <a href="https://paulgraham.com/good.html">"Be Good"</a> (April 2008, from a talk at Startup School). Graham says the phrase became the motto "about a month after we started Y Combinator" and that he'd still pick it. The essay's twist is that "make something people want" plus "don't worry too much about making money" describes a charity, and he argues that successful startups often behaved like one early on.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 8 -->
+<article class="slide" data-page="8" data-title="Alan Kay visits YC">
+  <div class="narration">
+    <p>In 2015 Alan Kay visited the YC office. Sam Altman tweeted this photo: Kay had crossed out "want" on the poster and written "need!!" underneath.</p>
+    <p>You can see his point. Wants are cheap and fickle. People want all sorts of things they'd never pay for or use. Kay is saying: aim at something deeper, a real need. Plenty of designers would side with him. I'm going to suggest that he's also missing something.</p>
+  </div>
+  <details class="aside" data-kind="source">
+    <summary><span class="tag">Source</span><span class="tease">Who Alan Kay is, briefly</span></summary>
+    <div class="body">
+      <p>Kay led the group at Xerox PARC that built Smalltalk in the 1970s, is usually credited with coining "object-oriented programming", and imagined the Dynabook, a personal computer for children, years before laptops existed. His views on what computing should be for are the backdrop to the graffiti: he has long complained that the industry builds what sells rather than what matters.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 9 -->
+<article class="slide" data-page="9" data-title="a fool's errand?">
+  <div class="narration">
+    <p>What if looking for wants and needs is a fool's errand either way?</p>
+  </div>
+</article>
+
+<!-- 10 -->
+<article class="slide" data-page="10" data-title="Rolf Faste on needfinding">
+  <div class="narration">
+    <p>Here's the problem, stated better than I could. This is Rolf Faste in 1987, writing about "needfinding", which was the design-school word for what we'd now call user research:</p>
+    <blockquote>We speak of needs as though they exist in some real or physical way. We say "I need a car," or "I need a house." In actual fact, cars and houses are not needs in themselves, they are but one way to meet certain needs such as mobility or shelter. The need itself is a perceived lack, something that is missing. Needfinding is thus a paradoxical activity—what is sought is a circumstance where something is missing. In order to find and articulate a need, this missing thing must be seen and recognized by someone.</blockquote>
+    <p>Two things in there matter. When people state a need, they usually state a solution: a car, when the need is getting around. And a need is an absence. You're being asked to go out into the world and find something that isn't there. No wonder it's hard.</p>
+  </div>
+  <details class="aside" data-kind="source">
+    <summary><span class="tag">Source</span><span class="tease">Faste, and why a needfinder admits the paradox</span></summary>
+    <div class="body">
+      <p>Rolf Faste taught in Stanford's product design program, which is part of the lineage that became "design thinking" and the d.school. So this isn't an outsider attacking needfinding. It's someone who practised it being honest about why it's slippery. The paper's title on the slide is "Perceiving Needs" (1987). I haven't read the full text, so I can't tell you how Faste resolved the paradox himself.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 11 -->
+<article class="slide" data-page="11" data-title="a better take">
+  <div class="narration">
+    <p>So here's a better take.</p>
+  </div>
+</article>
+
+<!-- 12 -->
+<article class="slide" data-page="12" data-title="The Heart of Innovation">
+  <div class="narration">
+    <p>This book, <em>The Heart of Innovation</em>, is by Matt Chanoff, Merrick Furst, Daniel Sabbah and Mark Wegman. Most of what I'm telling you today I learned from Merrick. The subtitle says what it's about: navigating to <em>authentic demand</em>, meaning demand that's actually there, as opposed to demand you hoped would be there.</p>
+    <p>The book starts from an uncomfortable observation. Every innovator has what they call a "waking dream". You know who your customers are and how they think. You can picture them buying your product and using it. But the dream isn't the world, and the real world turns out to be different.</p>
+    <p>Why does this happen to smart people? Because being wrong feels exactly like being right. Your thinking is skewed by cognitive biases, and chief among them is confirmation bias: you notice the evidence that fits the dream.</p>
+    <p>You can't fix that about yourself. What you can do is work with it. Instead of looking for confirmation, look for <em>indifference</em>: the people who shrug. And look for what the book calls a "not not", something it's <em>not</em> OK for people to <em>not</em> do. That's a much stronger signal than something people say they'd like.</p>
+    <p>And where do you start looking? At the situation your user is in, examined closely.</p>
+  </div>
+  <details class="aside" data-kind="source">
+    <summary><span class="tag">Source</span><span class="tease">The book, and where "authentic demand" shows up again</span></summary>
+    <div class="body">
+      <p>The cover reads <em>The Heart of Innovation: A Field Guide for Navigating to Authentic Demand</em>, with a foreword by Arvind Krishna of IBM. The <a href="http://theheartofinnovationbook.com">book's site</a> mentions case studies ranging from IBM's move to the Web to a single mother in a Kenyan slum. Several of the authors were at IBM; Furst is a computer scientist who spent a long career at Georgia Tech.</p>
+      <p>"Authentic demand" is also one of E1's project criteria: your app should have "some likelihood of being adopted by some (perhaps small) number of users". That's the book's phrase, lifted straight into the assignment.</p>
+    </div>
+  </details>
+  <details class="aside" data-kind="industry">
+    <summary><span class="tag">In practice</span><span class="tease">Looking for indifference = trying to falsify</span></summary>
+    <div class="body">
+      <p>If you've done customer discovery, this will sound like Rob Fitzpatrick's <em>The Mom Test</em>: don't ask people whether they'd use your idea, because they'll be kind. Ask about their life and what they did last time the problem came up. Silence and "oh, I just deal with it" are data.</p>
+      <p>The engineer's version is testing: a test suite that only confirms the happy path isn't evidence of much. You go looking for the input that breaks it. Jackson's earlier career was built on tools (Alloy) that do exactly that for designs, so it's not surprising he likes the same move for problems.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 13 -->
+<article class="slide" data-page="13" data-title="what's wrong with needs &amp; wants">
+  <div class="narration">
+    <p>Let me pull together what's wrong with needs and wants.</p>
+    <p>They're <strong>invisible</strong>. That's Faste's point. You're looking for something that doesn't exist yet.</p>
+    <p>We're also <strong>delusional</strong> about them. We say we want something, even that we need it, and then when it's handed to us we don't use it. Anyone who has shipped a feature that users requested and then watched nobody touch it knows this one.</p>
+    <p>And there's <strong>solutionism</strong>. A want or a need, as people express it, is very often a solution in disguise. "I need a car." "I want a battery-powered vacuum." The person has already done the design in their head, and they're usually not a good designer.</p>
+  </div>
+  <details class="aside" data-kind="debate">
+    <summary><span class="tag">Debate</span><span class="tease">Isn't this just design thinking with new words?</span></summary>
+    <div class="body">
+      <p>Partly. IDEO-style design thinking and the jobs-to-be-done school (Clayton Christensen, Tony Ulwick) both already say "don't take the stated request at face value; find the underlying job or pain". The famous "people don't want a quarter-inch drill, they want a quarter-inch hole" line is the same move as Faste's car.</p>
+      <p>The course's background note does take a swipe at design thinking specifically for starting from what people want or need. The difference it claims is concreteness: a bad situation is something you can point at and observe today, while a need is an abstraction you have to infer. Whether that difference is sharp in practice, or mostly a better phrasing of good user research, is a fair thing to wonder.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 14 -->
+<article class="slide" data-page="14" data-title="starting from bad situations">
+  <div class="narration">
+    <p>So here's the one thing I promised you: <strong>start from a bad situation</strong>.</p>
+    <p>A bad situation is a concrete scenario that a person finds themselves in, which makes them uncomfortable, upset, irritated, whatever it is, because they're forced to behave in a certain way. The words that matter are "concrete" and "forced". It's something that happens, to someone, today.</p>
+    <p>What do people do when they're in one? They tolerate it. Or they find a workaround. Or they avoid the situation altogether. All three are visible, which is the great advantage. You can watch someone tolerating, you can find their workaround, you can notice what they've stopped doing.</p>
+    <p>Then innovation has a clear definition: preventing or mitigating bad situations. Put more positively, it's letting people behave the way they always wanted to, even if they didn't know that's what they wanted until you showed them.</p>
+  </div>
+  <details class="aside" data-kind="source">
+    <summary><span class="tag">Source</span><span class="tease">The background note's four reasons this works better</span></summary>
+    <div class="body">
+      <p>From <a href="https://61040.github.io/fa26/background/how-to-innovate-from-bad-situations/">the course note</a>, paraphrased:</p>
+      <ul>
+        <li>Bad situations are real and can be confirmed by observation, without imagining anything.</li>
+        <li>People describe their problems far more reliably than they predict which solutions they'd adopt.</li>
+        <li>People are reluctant to change, so it's safer to take a behaviour they already have and remove what bothers them.</li>
+        <li>A bad situation is a yardstick. After you ship, you can check whether it still happens.</li>
+      </ul>
+    </div>
+  </details>
+  <details class="aside" data-kind="industry">
+    <summary><span class="tag">In practice</span><span class="tease">You already do this with bug reports</span></summary>
+    <div class="body">
+      <p>A good bug report is a bad situation: steps, expected, actual, cost. A bad feature request is "add a button that does X". Experienced engineers learn to reply to the second with "what were you trying to do when you wanted it?" This lecture is asking you to treat the whole product that way before it exists.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 15 -->
+<article class="slide" data-page="15" data-title="bad situations">
+  <div class="narration">
+    <p>Let's look at some examples.</p>
+  </div>
+</article>
+
+<!-- 16 -->
+<article class="slide" data-page="16" data-title="an app">
+  <div class="narration">
+    <p>First, an app.</p>
+  </div>
+</article>
+
+<!-- 17 -->
+<article class="slide" data-page="17" data-title="Skype's Create New Group">
+  <div class="narration">
+    <p>Back to Zoom. What was the bad situation it fixed? Here's a clue: the Skype contacts menu, with an arrow pointing at "Create New Group…".</p>
+    <p>To hold a group call in Skype, you, the host, had to assemble the group. Every participant had to be a Skype user, you had to know their account names, and you added them one by one. For a call with three friends, that's a mild annoyance. For a lecture with three hundred students, it's impossible.</p>
+  </div>
+</article>
+
+<!-- 18 -->
+<article class="slide" data-page="18" data-title="Zoom's fix: self joining">
+  <div class="narration">
+    <p>Here are the two flows side by side. Before, in Skype: you sign up to the app. Then the other person has to sign up to the app. Then you add them to a group. Then you call the group. The two red steps are the ones that cause the trouble, because each one depends on someone else, and the host has to do the adding for every single person.</p>
+    <p>After, in Zoom: you sign up, create a meeting, and send a link. You start the meeting, and people <em>join</em> it. That last step is highlighted in yellow because it's the whole innovation. The work of getting in moved from the host to each participant, who does it for themselves. And they didn't even need an account.</p>
+    <p>It's a small change. It isn't a better codec or a nicer UI. It's a different idea of how people get into a meeting, and it's why the line on that Bloomberg chart went vertical.</p>
+  </div>
+  <details class="aside" data-kind="source">
+    <summary><span class="tag">Source</span><span class="tease">This is your first "concept"</span></summary>
+    <div class="body">
+      <p>The background note names Zoom's fix as the <em>Linking</em> concept: the host creates a link, shares it, and participants join themselves. It then argues that each bad situation tends to turn into one design element, and those elements are concepts. That's the bridge to the next lecture.</p>
+      <p>It gives Calendly as another single-concept success: self-scheduling removed the back-and-forth of negotiating a meeting time.</p>
+    </div>
+  </details>
+  <details class="aside" data-kind="debate">
+    <summary><span class="tag">Debate</span><span class="tease">Was it really only the link?</span></summary>
+    <div class="body">
+      <p>Join-by-link wasn't unique to Zoom in 2020. WebEx and GoToMeeting had meeting URLs for years, and Google Meet had links too. What Zoom had was the combination: link joining, no account required for guests, a free tier, and a reputation for working on bad connections. So the tidy story is a simplification.</p>
+      <p>It still makes the point well, though, and the comparison the slide draws is specifically with Skype, the consumer incumbent, where the host-adds-everyone flow was real.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 19 -->
+<article class="slide" data-page="19" data-title="a bit too easy to join">
+  <div class="narration">
+    <p>There's a twist. On March 31, 2020, Boris Johnson tweeted a screenshot of "the first ever digital Cabinet", held on Zoom. The red circle is on the meeting ID, visible in the corner of the window.</p>
+    <p>If joining is as easy as having the link, then anyone with the link can join. That produced "Zoombombing": strangers turning up in classes and meetings. Zoom's fix had created a new bad situation, and the patches came quickly: passwords by default, waiting rooms. Hold on to that pattern, because the activity later is about exactly this.</p>
+  </div>
+  <details class="aside" data-kind="industry">
+    <summary><span class="tag">In practice</span><span class="tease">Convenience and access control pull against each other</span></summary>
+    <div class="body">
+      <p>This is the unguessable-link problem that every shared-doc product lives with: "anyone with the link can view" is a bearer token you've pasted into a chat. The usual responses are the ones Zoom reached for: a second factor (the passcode), a human gate (the waiting room), or a scope restriction (only people in my org). Each one gives back a bit of the friction the link removed.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 20 -->
+<article class="slide" data-page="20" data-title="a device">
+  <div class="narration">
+    <p>Next, a device.</p>
+  </div>
+</article>
+
+<!-- 21 -->
+<article class="slide" data-page="21" data-title="what made the iPod great?">
+  <div class="narration">
+    <p>What made the iPod great? On the left, Apple's iPod, designed by Jony Ive's team in 2001. On the right, the Braun T3 pocket radio, designed by Dieter Rams in 1958. The family resemblance is obvious, and Ive has never hidden his admiration for Rams.</p>
+    <p>So was the answer beautiful industrial design? It helped. But MP3 players already existed in 2001, and a nicer-looking MP3 player wouldn't have changed much. I want to suggest the design was not the reason.</p>
+  </div>
+</article>
+
+<!-- 22 -->
+<article class="slide" data-page="22" data-title="can't have all your music with you">
+  <div class="narration">
+    <p class="stage">An AI-generated image (the slide credits Google's "nano banana" model): a woman on a city street, outside a record shop, straining under armfuls of vinyl records, CDs and tote bags. The caption reads "the bad situation: can't have all your music with you".</p>
+    <p>That's the bad situation. The MP3 players of the time held a few dozen songs. You had to choose what to bring, and whatever you chose, you'd want something else.</p>
+  </div>
+  <details class="aside" data-kind="source">
+    <summary><span class="tag">Source</span><span class="tease">The note says there were several bad situations</span></summary>
+    <div class="body">
+      <p>The background note lists three for the iPod and matches each to a design element. You couldn't take all your music with you: fixed by the small hard drive and FireWire. Getting music meant ripping CDs or pirating: fixed by the iTunes Store. You had to buy a whole album for one song: fixed by selling tracks for $0.99. (The Store actually arrived in 2003, two years after the first iPod.)</p>
+      <p>It also uses the iPod for the "not not": once your friends all carried their whole library, being without yours became intolerable.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 23 -->
+<article class="slide" data-page="23" data-title="a timely technology">
+  <div class="narration">
+    <p>And here's what made the fix possible. Toshiba's tiny 1.8-inch, 5GB hard drive, from 2001, which could hold about a thousand songs in something you could put in your pocket. And FireWire, a fast serial bus Apple had developed years earlier, which meant filling that drive took minutes instead of hours.</p>
+    <p>Neither was an Apple invention for the iPod. The insight was seeing that these two parts, together, removed the bad situation. Technology is rarely the starting point. It's what you go looking for once you know which bad situation you're trying to get rid of.</p>
+  </div>
+  <details class="aside" data-kind="debate">
+    <summary><span class="tag">Debate</span><span class="tease">Doesn't Jobs contradict this whole lecture?</span></summary>
+    <div class="body">
+      <p>Jobs is often quoted as saying people don't know what they want until you show it to them, which sounds like permission to ignore users. It's actually compatible with this lecture. Nobody asked for a 5GB music player. But the bad situation (music you couldn't take with you) was sitting in plain view. The lecture's claim is that you shouldn't ask people to design the solution, not that you shouldn't study them.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 24 -->
+<article class="slide" data-page="24" data-title="a gadget">
+  <div class="narration">
+    <p>Now a much humbler example: a gadget.</p>
+  </div>
+</article>
+
+<!-- 25 -->
+<article class="slide" data-page="25" data-title="wine saver timeline">
+  <div class="narration">
+    <p>This is the history of a wine saver: a little hand pump and rubber stopper that sucks the air out of an opened bottle. The timeline runs from a brass prototype in 1983, to the first Wine Saver in 1986, then the "Concerto" in 2001 with a patented "click" vacuum indicator, a redesign in 2006, a combined pump-and-pourer in 2017, and a recycled-plastic version in 2024.</p>
+    <p>I've marked two bad situations. Bad situation number one is the reason the product exists: you open a bottle, don't finish it, and in a day or two it's gone off. So you either drink more than you meant to or you pour it away.</p>
+    <p>Bad situation number two is sitting under 2001. Once you had the pump, how many times should you pump? You couldn't tell when the bottle was sealed, so you pumped until your arm got tired, or you stopped too soon. The click tells you when you're done. That's a second bad situation, which only existed because of the first fix, solved fifteen years later by its own small design element.</p>
+  </div>
+  <details class="aside" data-kind="source">
+    <summary><span class="tag">Source</span><span class="tease">Whose product, and my reading of bad #2</span></summary>
+    <div class="body">
+      <p>The slide doesn't name the brand, but the product names and timeline match the Dutch company Vacu Vin's Wine Saver. The labels "bad #1" and "bad #2" are placed under 1983 and 2001 without explanation, so the account of bad situation #2 (not knowing when you've pumped enough) is my reading of the "click vacuum indicator", not something the slide states.</p>
+      <p>Wine people argue about whether these pumps work well; some prefer inert gas. That's beside the point here, which is about how the product's design history tracks bad situations.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 26 -->
+<article class="slide" data-page="26" data-title="an app feature">
+  <div class="narration">
+    <p>The same idea works at the scale of one feature inside an app.</p>
+  </div>
+</article>
+
+<!-- 27 -->
+<article class="slide" data-page="27" data-title="GitHub sign in">
+  <div class="narration">
+    <p>Here's GitHub's sign-in form. What bad situations does it solve? Plural, possibly.</p>
+    <p>Try it yourself before I say anything. The obvious answer is that someone else could get into your account and push code as you, or delete your repositories. But look at the form a bit longer. There's also the "Forgot password?" link, which solves a different bad situation: you, the rightful owner, locked out. And those two pull against each other. Every way you make recovery easier is a way an attacker can get in too.</p>
+  </div>
+  <details class="aside" data-kind="you">
+    <summary><span class="tag">For you</span><span class="tease">Do this one before reading on</span></summary>
+    <div class="body">
+      <p>Pick any feature in a tool you use daily at work, say code review approvals or branch protection, and write down the bad situation it exists to prevent. Phrase it as a concrete scenario with a person in it, not as a missing capability. Then ask what new bad situation the feature creates. Put it in the note box and paste it to me if you want a second opinion on whether it's a real bad situation or a feature in disguise.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 28 -->
+<article class="slide" data-page="28" data-title="activity: fixes cause new bad situations">
+  <div class="narration">
+    <p>Now an activity. You've seen that fixes can cause new bad situations: Zoombombing, the pump that didn't tell you when to stop. Let's work through one together.</p>
+  </div>
+</article>
+
+<!-- 29 -->
+<article class="slide" data-page="29" data-title="bad situation #1: backup">
+  <div class="narration">
+    <p>The icon is Apple's Time Machine, but think of any file backup. Go to the join link and answer: what's the bad situation that motivates backup in the first place?</p>
+    <p>Most of you will say something like "my disk dies and I lose everything". Good. Some of you might say "I deleted a file by accident" or "I overwrote the good version". Those are different bad situations, and they lead to different designs. Recovering from a dead disk needs a copy. Recovering from your own mistake needs history.</p>
+  </div>
+</article>
+
+<!-- 30 -->
+<article class="slide" data-page="30" data-title="bad situation #2 and #3">
+  <div class="narration">
+    <p>Here's a second bad situation, which is mine. How do I keep all the photos I take? My routine is: upload the photos from my phone into a folder called <code>import/</code>. Go through them, pick the ones I want, and move those into <code>photos/</code>. Run the backup, then delete everything left in <code>import/</code>.</p>
+    <p>The backup service has its own fix for a bad situation: backups would grow forever, keeping every file you ever deleted. So it removes old versions and deleted files from the backup after 30 days.</p>
+    <p>Now put those together, and you get bad situation number three. Suppose at some point something goes wrong in <code>photos/</code>. I drag a folder somewhere by mistake, or a sync tool deletes a batch, and I don't notice. I'm not looking at those old photos every day. Thirty days later the backup quietly forgets them too. The backup was supposed to be my safety net, and it faithfully backed up the loss. Each fix was reasonable. Together they create a bad situation nobody designed.</p>
+  </div>
+  <details class="aside" data-kind="source">
+    <summary><span class="tag">Source</span><span class="tease">What the slide says, and what I've filled in</span></summary>
+    <div class="body">
+      <p>The slide gives the workflow, the 30-day retention fix, and then just "bad situation #3" with no description. It was presumably worked out with the room. The account above (an unnoticed deletion that ages out of the backup) is my reconstruction. It's consistent with the next slide, whose solution is about spotting unusual changes, but I can't confirm it's what was said.</p>
+    </div>
+  </details>
+  <details class="aside" data-kind="industry">
+    <summary><span class="tag">In practice</span><span class="tease">The retention window meets the detection window</span></summary>
+    <div class="body">
+      <p>This is a well-known failure in backup and data engineering. If corruption or deletion goes unnoticed for longer than your retention period, your backups preserve the damage. Ransomware operators exploit it deliberately by encrypting slowly. It's why serious setups keep long-term immutable snapshots on a separate schedule, and why "restore tests" matter as much as backups.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 31 -->
+<article class="slide" data-page="31" data-title="sketching a solution">
+  <div class="narration">
+    <p>So let's sketch a solution. The diagram shows three computers, which you can read as three snapshots of the same machine over time.</p>
+    <p>At the bottom, for each snapshot, compute a <strong>checksum</strong> of every file: a fingerprint. Between consecutive snapshots, compare fingerprints to get a <strong>checksum diff</strong>: which files were added, deleted or changed. Then compare those diffs with each other, a <strong>diff of diffs</strong>. Most days look like other days: some new photos, a few edited documents. The diff of diffs flags the atypical day, when two thousand photos vanished at once, or every file changed at once, which is what ransomware looks like.</p>
+    <p>Notice what this is for. It doesn't change the backup's retention rule. It closes the gap between something going wrong and you finding out, which was the real bad situation.</p>
+  </div>
+  <details class="aside" data-kind="you">
+    <summary><span class="tag">For you</span><span class="tease">Is this a good E1-sized problem? Judge it yourself</span></summary>
+    <div class="body">
+      <p>Try running this example through E1's criteria: is it collaborative (does one user's behaviour affect another's)? Is it dynamic? What's the corroboration, and what would cast doubt on it? My guess is it fails "collaborative" as sketched, which is a useful thing to notice about how a strong bad situation can still be a poor fit for a particular assignment. Write your own verdict in the note box before you ask me.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 32 -->
+<article class="slide" data-page="32" data-title="common pitfalls">
+  <div class="narration">
+    <p>Starting from a bad situation raises your odds. It doesn't make you safe. Here are the common ways things still go wrong.</p>
+  </div>
+</article>
+
+<!-- 33 -->
+<article class="slide" data-page="33" data-title="bad, but not bad enough">
+  <div class="narration">
+    <p>The first pitfall: the situation is bad, but not bad enough.</p>
+  </div>
+</article>
+
+<!-- 34 -->
+<article class="slide" data-page="34" data-title="RunPee">
+  <div class="narration">
+    <p>RunPee, "the world's most indispensable movie app". It tells you the best times to run out and pee during a movie so you don't miss the best scenes. It counts down to the next "Peetime" and gives you a summary of what you missed.</p>
+    <p>It's a real bad situation, and a funny one, and it even got press. But how bad is it? You miss two minutes of a film. Most people tolerate it, which is the first of the three responses we saw. When tolerating is easy, you'll struggle to get anyone to change what they do.</p>
+  </div>
+  <details class="aside" data-kind="source">
+    <summary><span class="tag">Source</span><span class="tease">The course note's test for this</span></summary>
+    <div class="body">
+      <p>The background note's criteria include "the badness should have a clear cost" (in money, attention, well-being or relationships) and "one-off situations are less credible than recurring ones, unless they're potentially catastrophic". Its example is a cafeteria line. If people skip lunch or are late to meetings, it's a problem. If the line is short and people chat in it, it may not be bad at all.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 35 -->
+<article class="slide" data-page="35" data-title="Carrier Pidge">
+  <div class="narration">
+    <p class="stage">A web page for "Carrier Pidge", which "sends messages at pigeon speed": a slower social messaging app where a pigeon flies your note across a map, San Francisco to London. "The web is full of instant replies. Carrier Pidge makes room for the other feeling."</p>
+    <p>The slide has no commentary. Placed here, it reads as the extreme case: the "bad situation" (messages arrive too fast) is one hardly anyone suffers from. It's a charming idea, and charm is not demand.</p>
+  </div>
+  <details class="aside" data-kind="debate">
+    <summary><span class="tag">Debate</span><span class="tease">Delight is a legitimate goal, sometimes</span></summary>
+    <div class="body">
+      <p>Not every product addresses a pain. Games, art and toys are made for pleasure, and slow or intentional messaging has found real niches (letter-writing apps like Slowly have users). You could frame the bad situation as "every message feels disposable", and argue about whether that's real.</p>
+      <p>I don't know where Carrier Pidge comes from. It may be a real product, a student project, or something built for the slide, so don't read it as a criticism of an actual company.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 36 -->
+<article class="slide" data-page="36" data-title="antibodies">
+  <div class="narration">
+    <p>The second pitfall: antibodies. Your product works, but the world reacts against it and rejects it, the way a body rejects something foreign.</p>
+  </div>
+</article>
+
+<!-- 37 -->
+<article class="slide" data-page="37" data-title="friend pendant in the bath">
+  <div class="narration">
+    <p class="stage">A photograph of a young woman in a bubble bath, sipping from a mug, wearing a small white disc on a cord around her neck.</p>
+    <p>That disc is the product on the next slide, and the image appears to come from its advertising: a companion you never take off, even in the bath.</p>
+  </div>
+</article>
+
+<!-- 38 -->
+<article class="slide" data-page="38" data-title="friend.com subway ads">
+  <div class="narration">
+    <p>This is an Instagram post from September 2025 about Friend, an AI pendant that listens to you all day and chats with you through your phone. Its founder, Avi Schiffmann, spent over a million dollars on a New York subway campaign. New Yorkers covered the ads in graffiti. The one in the photo reads "But can't you take a BATH with you", scrawled around the friend.com logo.</p>
+    <p>Whatever loneliness the product was aimed at, the reaction was immediate and hostile. People didn't just ignore it. They went out of their way to mock it. That's an antibody response.</p>
+  </div>
+  <details class="aside" data-kind="debate">
+    <summary><span class="tag">Debate</span><span class="tease">Was the backlash the point?</span></summary>
+    <div class="body">
+      <p>Some coverage at the time suggested the provocative campaign was designed to get exactly this attention, and hostile attention is still attention. Whether Friend found authentic demand after the ads is a separate question from whether the ads were noticed. The lecture's point concerns the first.</p>
+      <p>There's also a genuine design question underneath: AI companionship addresses a real bad situation (loneliness is widely documented), but an always-on microphone around your neck triggers a privacy reaction in the people <em>around</em> you. That's the subject of slide 40.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 39 -->
+<article class="slide" data-page="39" data-title="Peeple">
+  <div class="narration">
+    <p>An older example: Peeple, pitched in 2015 as "Yelp for people". You'd rate the people you know, professionally, personally, and romantically, with a smiley, neutral or frowning face and a written review. The screenshot's sample review says "Never misses a deadline."</p>
+    <p>You can imagine a bad situation it's aimed at: you're about to hire someone, date someone, or let someone rent your flat, and you know nothing about them. But the public reaction to the announcement was fury. Being rated without consent felt like a violation, and the backlash arrived before the product did.</p>
+  </div>
+  <details class="aside" data-kind="source">
+    <summary><span class="tag">Source</span><span class="tease">What happened next</span></summary>
+    <div class="body">
+      <p>After the 2015 backlash, Peeple launched in 2016 in a much reduced form, in which negative reviews didn't appear on your profile without your approval. That softened the antibody response and also removed much of the reason anyone would use it. I'm confident about the outline of this; I haven't checked the fine details of the relaunch.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 40 -->
+<article class="slide" data-page="40" data-title="Google Glass">
+  <div class="narration">
+    <p>Antibodies don't have to come from your users. Here they came from other stakeholders.</p>
+    <p>Google Glass, 2014 to 2015. The headline is from CNN Wire, February 2014: "Google: How not to be a 'Glasshole'". Google itself had published etiquette advice for wearers. The people wearing Glass might have loved it. The people around them felt they were being recorded, and it felt creepy. Bars and cinemas banned it, and the consumer version didn't last.</p>
+    <p>So when you frame a bad situation, ask whose it is, and then ask who else is standing in the room.</p>
+  </div>
+  <details class="aside" data-kind="industry">
+    <summary><span class="tag">In practice</span><span class="tease">A decade later, the same fight</span></summary>
+    <div class="body">
+      <p>Camera glasses came back, this time as Meta's Ray-Ban glasses, with a small LED that lights when recording. That LED is a direct design response to the Glass antibodies: a signal for the bystander, who isn't the user. Whether an LED is enough is still argued over. Enterprise versions of Glass did carry on for years in warehouses and factories, where the bystanders were colleagues who had agreed to it.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 41 -->
+<article class="slide" data-page="41" data-title="friction">
+  <div class="narration">
+    <p>The third pitfall: friction.</p>
+  </div>
+</article>
+
+<!-- 42 -->
+<article class="slide" data-page="42" data-title="Mastodon">
+  <div class="narration">
+    <p>Mastodon has been around since 2016. It's an open-source social network, and it's federated: there's no single site, but many servers run independently by different people, which can talk to each other. The screenshot is from Mastodon's own onboarding: "Mastodon is not a single website. To use it, you need to make an account with a provider—we call them servers."</p>
+    <p>For many people that's the appeal. No single company owns it. But look at the first thing it asks a newcomer to do: choose a server, before you know what any of them are like or whether it matters. Most people bounced off that step. According to the slide, active users peaked at over two million in 2022, when many people left Twitter, and are now under one million.</p>
+    <p>This is the Zoom story backwards. Zoom took a step out of joining and won. Mastodon put a hard step into joining and lost most of the people who came.</p>
+  </div>
+  <details class="aside" data-kind="debate">
+    <summary><span class="tag">Debate</span><span class="tease">Friction, or a feature explained badly?</span></summary>
+    <div class="body">
+      <p>Mastodon's defenders would say the server choice is where community moderation lives, and that's the point of federation. Later, Mastodon added a default server so newcomers could skip the choice, and Bluesky, also built on a decentralised protocol, hides the server question entirely at sign-up. Both moves suggest the designers agreed the choice didn't belong at the front door, even if it belongs somewhere.</p>
+      <p>Other factors in the decline, such as network effects and fewer high-profile accounts, surely matter too. The slide isolates one cause.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 43 -->
+<article class="slide" data-page="43" data-title="unintended consequences">
+  <div class="narration">
+    <p>And the last pitfall: unintended consequences.</p>
+  </div>
+</article>
+
+<!-- 44 -->
+<article class="slide" data-page="44" data-title="YikYak">
+  <div class="narration">
+    <p>YikYak ran from 2013 to 2017. It was anonymous, location-based social media. Your posts, "yaks", were visible to anyone within a five-mile radius, which made it wildly popular on college campuses. On the phone screen you can see the kind of thing people posted: jokes about the weather and about campus life.</p>
+    <p>But anonymity plus locality turned out to be a perfect recipe for cyberbullying and hate speech aimed at people nearby, including threats against schools. Some schools banned it. The company added features to fight it, users left, and it shut down.</p>
+    <p>No one designed YikYak for harassment. The designers combined two features that were each reasonable, and didn't think hard enough about what the combination would enable. That's the same pattern as the backup activity, with much higher stakes.</p>
+  </div>
+  <details class="aside" data-kind="source">
+    <summary><span class="tag">Source</span><span class="tease">It came back</span></summary>
+    <div class="body">
+      <p>YikYak was relaunched in 2021 under new ownership, with stronger community guidelines and moderation. The 2013–2017 dates on the slide refer to the original company. This course has a later lecture on unintended consequences and ethics (the welcome deck mentioned more on usability, ethics and AI this year), so expect this theme to return.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 45 -->
+<article class="slide" data-page="45" data-title="your assignment">
+  <div class="narration">
+    <p>Let's connect this to your first assignment.</p>
+  </div>
+</article>
+
+<!-- 46 -->
+<article class="slide" data-page="46" data-title="what you'll do in your assignment">
+  <div class="narration">
+    <p>In E1 you'll go through four steps.</p>
+    <p>First, <strong>explore your surroundings</strong>. Look at the clubs and activities you're part of, the services you use, your hobbies and special interests. You're an insider in more domains than you think.</p>
+    <p>Then <strong>notice bad situations</strong>. What's not working? What's annoying? The small note underneath says it well: maybe other people haven't noticed. The best problems are often ones that everyone in a domain tolerates so completely that they've stopped seeing them.</p>
+    <p>Then <strong>collect evidence</strong>: data, complaints, comparable products. And seek <em>dis</em>confirmation. That's Furst's advice from earlier. You're looking for reasons your bad situation isn't real, and if you can't find them, you've learned something.</p>
+    <p>Finally, <strong>sketch a solution</strong>. It should be plausible, it should actually fix the bad situation, and it should be novel in <em>some</em> respect. It doesn't need to be unprecedented. A better combination of existing ideas counts.</p>
+  </div>
+  <details class="aside" data-kind="you">
+    <summary><span class="tag">For you</span><span class="tease">Doing E1 as a listener</span></summary>
+    <div class="body">
+      <p><a href="https://61040.github.io/fa26/assignments/e1/">E1</a> asks for five parts: domain, bad situations, corroboration, workarounds and comparables, and a solution sketch, in one to three pages. It also warns that "I can't do X" is often a feature request in disguise, and it gives the iPod as a worked example.</p>
+      <p>You have an advantage here: years of professional context most students don't have. If you want to try it, start by listing a few domains you're an insider in and one annoyance in each, in the note box. Don't polish it. Paste it to me and I'll push on which ones are bad situations and which are features wearing a disguise. I won't pick one for you.</p>
+    </div>
+  </details>
+  <details class="aside" data-kind="source">
+    <summary><span class="tag">Source</span><span class="tease">The note's four ways to find bad situations</span></summary>
+    <div class="body">
+      <p>The background note lists these (it says three, then gives four): interview people about what goes wrong, not what they want; observe them working and notice friction they don't; look for workarounds and ask what problem they exist to solve; and imagine how a malicious actor would break things, since that's probably already happening.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 47 -->
+<article class="slide" data-page="47" data-title="parting thought">
+  <div class="narration">
+    <p>One parting thought before you go.</p>
+  </div>
+</article>
+
+<!-- 48 -->
+<article class="slide" data-page="48" data-title="Steve Jobs on grokking">
+  <div class="narration">
+    <p>It's from Steve Jobs, who seems a fitting person to end on after the iPod:</p>
+    <blockquote>To design something really well, you have to get it. You have to really grok what it's all about. It takes a passionate commitment to really thoroughly understand something, chew it up, not just quickly swallow it. Most people don't take the time to do that.</blockquote>
+    <p>That's the job for E1. Pick a domain you care about and take the time to understand it, before you design anything at all. See you Monday.</p>
+  </div>
+  <details class="aside" data-kind="source">
+    <summary><span class="tag">Source</span><span class="tease">Where the quote comes from, probably</span></summary>
+    <div class="body">
+      <p>The slide attributes it only to Jobs. As far as I know, it's from Gary Wolf's 1996 <em>Wired</em> interview with Jobs, "Steve Jobs: The Next Insanely Great Thing", the same interview that has his line about creativity being "just connecting things". I haven't checked it against the original, so treat that source as likely but unverified.</p>
+    </div>
+  </details>
+</article>
+
+<section>
+  <h2>Check yourself</h2>
+  <p class="meta">Try answering in your head, or in the note box at the bottom, before opening each answer.</p>
+
+  <div class="check">
+    <p class="q">1. A colleague says: "Our users need a Slack integration." Why is that a weak starting point, and what would you ask?</p>
+    <details><summary>Show answer</summary>
+      <p>It's a solution in disguise (solutionism). It names a feature and skips the problem. Ask what goes wrong today without it: who misses what, when, and what it costs them. Maybe the bad situation is that on-call engineers don't see an alert until someone phones them. That might be fixed by Slack, or by something else entirely.</p>
+    </details>
+  </div>
+
+  <div class="check">
+    <p class="q">2. What exactly did Zoom change compared with Skype's group calls, and what new bad situation did it create?</p>
+    <details><summary>Show answer</summary>
+      <p>Getting into a meeting moved from the host adding each participant (who needed an account) to participants joining themselves via a link, no account needed. The new bad situation was that anyone with the link could join too, which led to Zoombombing and then to passcodes and waiting rooms.</p>
+    </details>
+  </div>
+
+  <div class="check">
+    <p class="q">3. What are a person's three responses to a bad situation, and why is it useful that all of them can be observed?</p>
+    <details><summary>Show answer</summary>
+      <p>Tolerate it, work around it, or avoid it. Because each shows up in behaviour (the grumbling, the spreadsheet workaround, the thing people stopped doing), you can confirm a bad situation by watching, without asking people to imagine a product that doesn't exist.</p>
+    </details>
+  </div>
+
+  <div class="check">
+    <p class="q">4. Name the four pitfalls from the lecture and match each to its example.</p>
+    <details><summary>Show answer</summary>
+      <p>Bad but not bad enough: RunPee (and Carrier Pidge). Antibodies: Friend, Peeple, and Google Glass, where the reaction came from bystanders. Friction: Mastodon's server choice. Unintended consequences: YikYak's anonymity plus locality leading to harassment.</p>
+    </details>
+  </div>
+
+  <div class="check">
+    <p class="q">5. In the backup activity, why is "delete from backup after 30 days" both a reasonable fix and the cause of a new problem?</p>
+    <details><summary>Show answer</summary>
+      <p>It solves unbounded growth of the backup. But if a file disappears from your live disk and you don't notice for 30 days, the backup drops it too, so the safety net fails silently. The sketched fix (checksums, diffs, diff of diffs) targets the real gap: noticing unusual changes quickly.</p>
+    </details>
+  </div>
+
+  <div class="check">
+    <p class="q">6. What's a "not not", and why is it a stronger signal than "people want this"?</p>
+    <details><summary>Show answer</summary>
+      <p>Something it becomes not acceptable for people not to do or have, as with carrying your whole music library once everyone else did. People's stated wants often evaporate when the product arrives. A "not not" shows up in behaviour: they won't go back.</p>
+    </details>
+  </div>
+
+  <h2>Your thoughts</h2>
+  <div id="general-note"></div>
+
+  <nav class="nextprev">
+    <a href="welcome.html"><small>Previous</small>Welcome</a>
+    <a class="next" href="intro-to-concepts.html"><small>Next</small>Intro to concept design</a>
+  </nav>
+</section>
+
+<footer class="site">
+  Slides © MIT 6.1040 staff, loaded from <a href="https://61040.github.io/fa26/">61040.github.io</a> and not copied here. Narration and notes written by Claude for personal study; not affiliated with MIT.
+</footer>
+</main>
+
+<script type="module" src="../assets/lecture.js"></script>
+</body>
+</html>

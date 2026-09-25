@@ -1,0 +1,582 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Designing a Concept · 6.1040</title>
+<meta name="description" content="Narrated companion to the 6.1040 Software Design lecture on designing a concept: states, actions and traces (MIT, Fall 2026).">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alegreya:wght@700&family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+</head>
+<body data-lecture="designing-a-concept" data-pdf="https://61040.github.io/fa26/lectures/designing-a-concept.pdf">
+
+<nav class="topbar"><div class="wrap">
+  <a href="../">← Course</a>
+  <span class="crumb">Lecture 3 · Designing a concept</span>
+</div><div class="progress"></div></nav>
+
+<main class="wrap">
+<header class="hero">
+  <p class="kicker">Lecture 3 · Wed Sep 16</p>
+  <h1>Designing a concept</h1>
+  <p class="lede">Daniel Jackson moves from what a concept is for to exactly what it does. An operational principle tells one story. To pin down every possible story you need state and actions, and a small inductive definition that turns them into a set of traces. Along the way: handles, generic types, and how Tinder bent a concept to make money.</p>
+  <p class="meta">39 slides · roughly an hour of class time · <a href="https://61040.github.io/fa26/lectures/designing-a-concept.pdf">original PDF</a> · The PDF is about 16 MB, so on mobile data the slides may take a moment to appear.</p>
+
+  <details class="howto">
+    <summary>How to read this page</summary>
+    <ul>
+      <li>Each slide is loaded live from the course website, and below it is what the lecturer might plausibly have said. <strong>The narration is my reconstruction, not a transcript.</strong> Where a slide is only photos, I say so instead of inventing a speech.</li>
+      <li>The coloured boxes are margin notes. Tap to open.
+        <span style="color:var(--source)">Source</span> points to where an idea comes from,
+        <span style="color:var(--industry)">In practice</span> connects it to industry,
+        <span style="color:var(--debate)">Debate</span> covers where it's contested, and
+        <span style="color:var(--you)">For you</span> is about following along as a listener.</li>
+      <li>Tap a slide to see it full screen. Use <em>＋ Add a note</em> on any slide. Notes are saved on this device only. <em>Copy notes for chat</em> collects them so you can paste them to Claude.</li>
+    </ul>
+  </details>
+</header>
+
+<!-- 1 -->
+<article class="slide" data-page="1" data-title="designing a concept">
+  <div class="narration">
+    <p>Last time we looked at what concepts are and why they matter. Today is about the craft of writing one down precisely enough that you, a teammate or an LLM could build it without guessing.</p>
+  </div>
+</article>
+
+<!-- 2 -->
+<article class="slide" data-page="2" data-title="we live at the level of our language">
+  <div class="narration">
+    <p>I'll start with a line from the novelist Ellen Gilchrist: "We live at the level of our language. Whatever we can articulate we can imagine or understand or explore."</p>
+    <p>Underneath it I've written what I think the line says in the AI coding era: whatever we can articulate, we can build. If you can describe a piece of behaviour precisely, an LLM will produce code for it in seconds. If you can only gesture at it, you'll get something that gestures back. So the bottleneck is our language for describing behaviour, and today I want to give you a better one.</p>
+  </div>
+  <details class="aside" data-kind="source">
+    <summary><span class="tag">Source</span><span class="tease">Where the Gilchrist line comes from</span></summary>
+    <div class="body">
+      <p>The slide doesn't cite it. Quotation sites attribute it to Gilchrist's <em>Falling Through Space</em> (1987), a collection of her journals and essays. I haven't checked the page myself. The second, adapted version on the slide is Jackson's.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 3 -->
+<article class="slide" data-page="3" data-title="what you'll learn today">
+  <div class="narration">
+    <p>If you take away one thing today, it's what I think is one of the best ideas in computer science: how to define a transition relation inductively. That sounds forbidding. By the middle of the lecture I hope it will seem almost obvious, and you'll see it's exactly what sits behind the state and actions sections of a concept.</p>
+  </div>
+</article>
+
+<!-- 4 -->
+<article class="slide" data-page="4" data-title="what concepts are (review)">
+  <div class="narration">
+    <p>First, a quick review of what concepts are.</p>
+  </div>
+</article>
+
+<!-- 5 -->
+<article class="slide" data-page="5" data-title="three key elements">
+  <div class="narration">
+    <p>So far you've seen three parts of a concept. There's a <strong>name</strong>, here <em>Inviting</em>. There's a <strong>purpose</strong>, which says what the concept is for: ensure mutual consent for participation in some engagement, and so prevent unwanted participation. And there's an <strong>operational principle</strong>, which says how it works by telling a typical story. A host invites guests one at a time. Each guest can accept or decline, until the invitation expires, after which no responses are accepted.</p>
+    <p>The person in the photo is Michael Polanyi, the chemist and philosopher who came up with the idea of an operational principle. He was talking about machines. You can know all the physics of a clock and still not understand the clock, because what makes it a clock is the way its parts are arranged to serve a purpose. The operational principle is that arrangement, told as the way the thing is used.</p>
+    <p>Notice that the principle names things happening: invite, accept, decline, expire. Keep an eye on those verbs. They're going to become the actions.</p>
+  </div>
+  <details class="aside" data-kind="source">
+    <summary><span class="tag">Source</span><span class="tease">From Polanyi to software, via another Jackson</span></summary>
+    <div class="body">
+      <p>Polanyi developed the idea in <em>Personal Knowledge</em> (1958). It reached software through Michael Jackson, the requirements engineer behind problem frames, who wrote a paper called "The Operational Principle and Problem Frames". Michael Jackson is Daniel Jackson's father, which is part of why the idea turns up so naturally here.</p>
+      <p>The <a href="https://essenceofsoftware.com/tutorials/concept-basics/principle/">operational principles tutorial</a> on essenceofsoftware.com covers how Daniel Jackson uses the term.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 6 -->
+<article class="slide" data-page="6" data-title="purposeful, not UI idioms">
+  <div class="narration">
+    <p>Here are three concepts that are easy to confuse because they can look almost the same on screen.</p>
+    <p><em>Upvoting</em> is for ranking items by popularity: after a series of upvotes, items are ordered by their count. The example is a Stack Overflow answer with its arrows. <em>Reacting</em> is for sharing reactions: after users react to an item, the reactions are displayed, often aggregated. That's the thumbs-up on a Slack message. <em>Recommending</em> uses your prior likes to recommend things: your likes lead to a ranking of kinds of items, which determines what you're shown. That's the thumbs-up and thumbs-down on Netflix.</p>
+    <p>Every one of these could be a thumb. The widget tells you nothing. What distinguishes them is the purpose and the course of action that serves it, which is what the line at the top of the slide means: concepts are purposeful courses of action, not user interface idioms.</p>
+  </div>
+  <details class="aside" data-kind="industry">
+    <summary><span class="tag">In practice</span><span class="tease">Same button, three data models</span></summary>
+    <div class="body">
+      <p>You can see the difference in the schema you'd build. Upvoting needs a count per item, and probably a record of who voted so nobody votes twice. Reacting needs (user, item, emoji) triples that are shown back to people. Recommending needs a per-user preference profile that nobody else sees.</p>
+      <p>A useful habit in design review: when someone proposes "a like button", ask which of these it is. If the answer is "all three", you've found a future bug report.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 7 -->
+<article class="slide" data-page="7" data-title="how concepts make usability (review)">
+  <div class="narration">
+    <p>And a quick reminder of how concepts make or break usability.</p>
+  </div>
+</article>
+
+<!-- 8 -->
+<article class="slide" data-page="8" data-title="Facebook's reactions">
+  <div class="narration">
+    <p>Facebook's reactions: like, love, care, haha, wow, sad, angry. Which concept is at play? Upvoting, Reacting or Recommending?</p>
+    <p>To users it looks like Reacting. You're telling a friend how their post made you feel. But look at the headline underneath. Facebook's ranking algorithm gave an "angry" reaction five times the weight of a plain like. So inside the company, the reactions were also feeding a ranking, the way upvotes do, and a recommender deciding what to show everyone else. Anger was being counted as a strong vote for "more of this". After years of research, employees concluded the result was more toxicity.</p>
+    <p>That's a concept confusion with real consequences. Users thought they were doing one thing, and the system treated it as another.</p>
+  </div>
+  <details class="aside" data-kind="source">
+    <summary><span class="tag">Source</span><span class="tease">The reporting behind the headline</span></summary>
+    <div class="body">
+      <p>The headline and subhead match an October 2021 article, <a href="https://www.nbcnews.com/tech/tech-news/emoji-reactions-cute-addition-facebook-became-headache-rcna3747">"Emoji reactions were a cute addition to Facebook. They became a headache."</a>, carried by NBC News. It was part of the coverage of the documents Frances Haugen disclosed, and it describes Facebook planning in late 2017 to weight emoji reactions at five times a like in its ranking formula.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 9 -->
+<article class="slide" data-page="9" data-title="Meta AI's share action">
+  <div class="narration">
+    <p>A more recent one. Meta's AI app has a Share button at the top of each conversation, the arrow points to it. Someone asks for the best laptops for college students, taps Share, and the conversation goes into a public feed.</p>
+    <p>The investor Justine Moore spent an hour browsing that feed in June 2025 and found medical and tax records, private details of court cases, draft apology letters for crimes, home addresses and confessions of affairs. People were clearly not trying to publish those.</p>
+    <p>So, what concept do you think users had in mind when they pressed Share? My guess is something like sharing a link with one person, or saving the chat. What they got was Publishing.</p>
+  </div>
+  <details class="aside" data-kind="source">
+    <summary><span class="tag">Source</span><span class="tease">What was reported at the time</span></summary>
+    <div class="body">
+      <p>Several outlets covered this in mid-June 2025, including <a href="https://www.malwarebytes.com/blog/news/2025/06/your-meta-ai-chats-might-be-public-and-its-not-a-bug">Malwarebytes</a>. Meta's position was that chats stay private unless the user goes through a multi-step process to post them to the app's Discover feed. That's probably true, and it's the point: every step can be clear on its own while the concept stays hidden.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 10 -->
+<article class="slide" data-page="10" data-title="asking the bot">
+  <div class="narration">
+    <p>Here's the follow-up. Moore asked the Meta AI bot itself about the problem. It called the situation "pretty wild", said part of the issue was that users of all ages can get confused, and then offered, "some people don't read the fine print lol." When she pointed out she'd seen medical and tax records and court filings, it agreed that was not an "lol" situation.</p>
+    <p>I show this partly because it's funny, and partly because "users should read the fine print" is the answer designers always reach for when their concept doesn't match the user's. The fine print can't fix that.</p>
+  </div>
+</article>
+
+<!-- 11 -->
+<article class="slide" data-page="11" data-title="today: detailed design">
+  <div class="narration">
+    <p>Today, though, isn't about purposes and confusions. It's about detailed design.</p>
+  </div>
+</article>
+
+<!-- 12 -->
+<article class="slide" data-page="12" data-title="the details are not details">
+  <div class="narration">
+    <p>Charles Eames: "The details are not details. They make the design." The background is a collage of Eames furniture, chairs whose whole character comes from how a leg meets a seat.</p>
+    <p>Software is the same. Can a guest accept an invitation after it's expired? Can they change their mind? Can the host send a second invitation? Those sound like details, and they're exactly what users run into. The operational principle doesn't answer them, as we'll see in a minute.</p>
+  </div>
+  <details class="aside" data-kind="source">
+    <summary><span class="tag">Source</span><span class="tease">A widely quoted line</span></summary>
+    <div class="body">
+      <p>This is one of the best-known lines attributed to Charles Eames, and it's often quoted as "The details are not <em>the</em> details." The slide gives no source, and I couldn't pin down where he first said it, so treat the exact wording as uncertain.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 13 -->
+<article class="slide" data-page="13" data-title="what is behavior?">
+  <div class="narration">
+    <p>So we need to ask a basic question. When we say a concept has a behaviour, what exactly is that?</p>
+  </div>
+</article>
+
+<!-- 14 -->
+<article class="slide" data-page="14" data-title="making behavior more explicit">
+  <div class="narration">
+    <p>Let's make the behaviour in the Inviting principle more explicit. On the left is the concept as you've seen it. In the middle I've taken the principle and underlined the actions: <strong>invites</strong>, <strong>accept</strong>, <strong>decline</strong>, <strong>expires</strong>. Those are the things that happen.</p>
+    <p>Once you have actions, you can write down a <strong>trace</strong>: a sequence of actions with their arguments, in the order they happen. At top right is a sample trace. Alice and Bob are invited to a party. Alice accepts, Bob declines, and then both invitations expire.</p>
+    <p>Below it is something that is <em>not</em> a trace. It's the same events, except that Bob declines after his invitation has expired. The principle says that after expiry no responses are accepted, so this sequence can't happen.</p>
+    <p>That's the core idea. The behaviour of a concept is the set of traces it allows. Everything else today is about how to say which sequences are in that set.</p>
+  </div>
+  <details class="aside" data-kind="you">
+    <summary><span class="tag">For you</span><span class="tease">Try marking actions on the E2 concept</span></summary>
+    <div class="body">
+      <p>Exercise 2 in <a href="https://61040.github.io/fa26/assignments/e2/">E2</a> (due five days after this lecture) gives a principle for <em>GiftRegistering</em>: a recipient creates a registry, adds items, opens it, givers purchase, and the recipient closes it. Underline the verbs, then write one trace and one non-trace, as on this slide. It takes five minutes and makes the next few slides much easier. Put them in the note box if you want me to check them.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 15 -->
+<article class="slide" data-page="15" data-title="traces and non-traces">
+  <div class="narration">
+    <p>Now you try. Here's the principle again, and four sequences. Which are valid traces?</p>
+    <p>Take a minute before reading on.</p>
+    <p>Number 1 invites Alice, she accepts, then invites Bob, he declines, then both expire. That fits the story. Number 2 is like the sample trace but the two expiries come in the other order. Nothing in the principle says which expires first, so that seems fine too.</p>
+    <p>Number 3 is harder. Alice is invited, her invitation expires, and she's invited again and accepts. Is re-inviting allowed? The principle doesn't say. Number 4 has Bob accept and then decline. Can a guest change their mind? The principle says "accept or decline", which suggests one or the other, but it doesn't forbid it.</p>
+    <p>You'll probably disagree with the person next to you about 3 and 4, and that's what I wanted. The principle was never meant to settle these questions.</p>
+  </div>
+  <details class="aside" data-kind="debate">
+    <summary><span class="tag">Debate</span><span class="tease">A wrinkle with trace 1 and the sample trace</span></summary>
+    <div class="body">
+      <p>The slides don't give answers, so these are my readings. One thing worth noticing: the sample trace on the previous slide, and trace 1 here, both expire Alice's invitation <em>after</em> she accepted it. Under the full specification on slide 25, <code>expire</code> requires the invitation to be PENDING, so it can't follow <code>accept</code>. Under that spec traces 1 and 2 aren't valid as written, and neither is the "sample trace".</p>
+      <p>I don't think that's a mistake so much as a demonstration. Read informally, "the invitation expires" sounds like something that happens to every invitation on a date. Read as an action with a precondition, it only happens to pending ones. You can't tell which the principle meant until you write the actions down, which is the lesson of the next slide.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 16 -->
+<article class="slide" data-page="16" data-title="lesson">
+  <div class="narration">
+    <p>So here's the lesson. The operational principle describes an archetypal scenario that illustrates how a concept works. It does not define the behaviour fully.</p>
+    <p>That's by design. The principle is there to explain, and a good explanation leaves out the corner cases. But someone building the thing, or an LLM generating it, has to decide every corner case, so we need something else that does.</p>
+  </div>
+</article>
+
+<!-- 17 -->
+<article class="slide" data-page="17" data-title="how to define unbounded behavior">
+  <div class="narration">
+    <p>The problem is that the set of traces is infinite. How do you define an unbounded behaviour with a finite description?</p>
+  </div>
+</article>
+
+<!-- 18 -->
+<article class="slide" data-page="18" data-title="industry notations">
+  <div class="narration">
+    <p>Industry has some standard answers. On the left is an activity diagram, a kind of flowchart, for buying a ticket from a vending machine. On the right is a state transition diagram for one ATM transaction: getting specifics, sending to the bank, handling an invalid PIN, and so on.</p>
+    <p>Graphical notation is great, and I mean that. For one process running through its steps, a picture like this is hard to beat.</p>
+    <p>But try to draw Inviting this way. You can draw the life of one invitation to one guest for one engagement: pending, then accepted, declined or expired. The real concept has any number of engagements, each with any number of guests, all at different stages at the same time. The diagram works only for one engagement and one invitee. We need a scheme that scales.</p>
+  </div>
+  <details class="aside" data-kind="industry">
+    <summary><span class="tag">In practice</span><span class="tease">Where state diagrams still earn their keep</span></summary>
+    <div class="body">
+      <p>State machines are everywhere in production code: order status, payment flows, UI components. Libraries like XState implement David Harel's statecharts (1987), which added nesting and parallel regions to plain state diagrams.</p>
+      <p>The trick practitioners use is the one Jackson describes: draw the machine for a <em>single</em> entity (one order, one invitation), and let the database hold many copies. That works until the rules start relating entities to each other, such as "at most one pending invitation per guest per event". A per-entity diagram can't express that. The textual scheme on the next slides can.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 19 -->
+<article class="slide" data-page="19" data-title="a more powerful scheme">
+  <div class="narration">
+    <p>Here's a more powerful scheme, shown on the simplest concept I can think of: <em>Counting</em>.</p>
+    <p>It has one piece of <strong>state</strong>, a counter, which is an integer and starts at 0. It has one <strong>action</strong>, <code>increment</code>, which returns an integer. The action has two clauses. The <strong>where</strong> clause is the precondition: it can happen only when the counter is below the maximum integer. The <strong>then</strong> clause is the effect: add 1 to the counter and return the new value.</p>
+    <p>In the middle I've unrolled this as a state machine. Start at counter = 0. Increment returns 1 and moves you to counter = 1. Increment again returns 2, and so on.</p>
+    <p>On the right is the same thing seen as generating traces. The empty trace goes with counter = 0. Add one increment and you get the trace <code>increment(): (1)</code>, with counter = 1. Add another and you get <code>increment(): (1), increment(): (2)</code>, with counter = 2. Each trace comes paired with the state you're in after it. Keep that pairing in mind.</p>
+  </div>
+</article>
+
+<!-- 20 -->
+<article class="slide" data-page="20" data-title="a choice of action">
+  <div class="narration">
+    <p>Things get more interesting when there's a choice. Add a second action, <code>decrement</code>. Its precondition is that the counter is above 0. Its effect is to subtract 1 and return the new value.</p>
+    <p>Now the state machine has arrows going both ways. From counter = 1 you can increment to 2 or decrement back to 0. At counter = 0 only increment is possible, because decrement's where clause fails. That's what a precondition does: it removes arrows.</p>
+  </div>
+</article>
+
+<!-- 21 -->
+<article class="slide" data-page="21" data-title="a tree of traces">
+  <div class="narration">
+    <p>So now, instead of a single line of traces, we get a tree.</p>
+    <p>Follow it from the top. The empty trace, counter = 0. The only possible move is increment, giving counter = 1. From there, two branches. Decrement gives the trace <code>increment, decrement</code> with counter = 0. Increment gives <code>increment, increment</code> with counter = 2. From each of those it branches again. Under the left one, you can only increment, back to counter = 1. Under the right one, you can decrement to 1 or increment to 3.</p>
+    <p>Notice that different traces can lead to the same state. <code>increment</code> alone and <code>increment, decrement, increment</code> both leave the counter at 1. The state is what the concept remembers, and it forgets how it got there. The trace is the full history.</p>
+  </div>
+</article>
+
+<!-- 22 -->
+<article class="slide" data-page="22" data-title="the inductive definition">
+  <div class="narration">
+    <p>Here's the idea I promised at the start. Everything I've just drawn follows from a tiny definition.</p>
+    <p>On the left is what you write, the <strong>state transition spec</strong>. There's a set of states <em>S</em> and an initial state <em>S0</em>. There's a set of actions, and each action has a precondition, the where clause, which is a condition on a state, and a postcondition, the then clause, which relates the state before to the state after.</p>
+    <p>In the middle is what we want to define: a set of traces <em>T</em>, and a function <em>state(t)</em> that gives the state after each trace.</p>
+    <p>On the right is the definition, in two parts.</p>
+    <p><strong>The base case.</strong> The empty trace <code>&lt;&gt;</code> is in <em>T</em>, and its state is the initial state.</p>
+    <p><strong>The induction step.</strong> Suppose trace <em>t</em> is in <em>T</em> and leads to state <em>s</em>. Take any action whose where clause holds in <em>s</em>, and whose then clause takes <em>s</em> to some <em>s′</em>. Then <em>t</em> with that action added on the end is also in <em>T</em>, and its state is <em>s′</em>.</p>
+    <p>That's all. Let me run it on Counting so you can see it work. Start: <code>&lt;&gt;</code> is a trace, state 0. Can we add <code>decrement</code>? Its where clause needs counter &gt; 0, and 0 isn't, so no. Can we add <code>increment</code>? 0 is below the maximum, so yes, and the then clause takes 0 to 1. So <code>&lt;increment&gt;</code> is a trace with state 1. Now from state 1 both where clauses hold, so both extensions are traces. And so on for ever.</p>
+    <p>Two lines generate an infinite set of behaviours, and you never had to draw anything. That's why I think it's one of the best ideas in the field. When you write the state and actions of a concept, this is what you're defining, whether or not you think of it this way.</p>
+  </div>
+  <details class="aside" data-kind="industry">
+    <summary><span class="tag">In practice</span><span class="tease">You've written this function: it's a reducer</span></summary>
+    <div class="body">
+      <p>If you've used event sourcing, Redux, or Elm, you know <em>state(t)</em>. It's <code>trace.reduce(apply, initialState)</code>: fold the event log over the initial state to get the current state. The where clause is the validation you do before accepting a command. An event store is literally the set of traces that have actually happened.</p>
+      <p>The difference is emphasis. In event sourcing the log is an implementation technique. Here the traces are the <em>meaning</em> of the design, and the state is whatever you need to remember to decide which next actions are allowed.</p>
+    </div>
+  </details>
+  <details class="aside" data-kind="source">
+    <summary><span class="tag">Source</span><span class="tease">Traces as the meaning of a process</span></summary>
+    <div class="body">
+      <p>Defining behaviour as a set of traces is an old and central idea. Tony Hoare's <em>Communicating Sequential Processes</em> (1985) builds its simplest model of a process as the set of its traces. Specification languages that pair state with pre- and postconditions, like Z, VDM and B, and Jackson's own Alloy and Leslie Lamport's TLA+, all rest on something like the inductive definition on this slide. The slide presents it without citation, so which of these Jackson has in mind is my guess.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 23 -->
+<article class="slide" data-page="23" data-title="a more interesting concept">
+  <div class="narration">
+    <p>Counting is a toy, so here's something a bit more realistic: <em>VisitCounting</em>, the kind of thing that sits behind a page-view counter.</p>
+    <p>The state is a set of URLs, each with a count. The highlighted note matters: "a set of URLs with a count" means <em>each</em> URL in the set has a count. It's a mapping from URL to number. There's one action, <code>visit(url)</code>, which has no where clause, so it can always happen. If the URL already has a count, add one. Otherwise give it a count of one. Then return the count.</p>
+    <p>Follow the trace on the left. Start with nothing. Visit dnj.photo, get 1, and the state is <code>(dnj.photo, 1)</code>. Visit it again, get 2, state <code>(dnj.photo, 2)</code>. Visit mit.edu, get 1, and now the state holds both pairs. On the right is the same run as growing traces, each paired with its state, and the dotted arrows show the tree branching out because at every step you could visit any URL at all.</p>
+    <p>There's no state diagram you could draw for this. The number of possible states is unbounded. The inductive definition doesn't care.</p>
+  </div>
+</article>
+
+<!-- 24 -->
+<article class="slide" data-page="24" data-title="back to inviting">
+  <div class="narration">
+    <p>Now we have the tools, let's go back to Inviting and do it properly.</p>
+  </div>
+</article>
+
+<!-- 25 -->
+<article class="slide" data-page="25" data-title="states &amp; actions for Inviting">
+  <div class="narration">
+    <p>Here's the <strong>state</strong>. A set of invitations, each with an engagement, an invited guest, an expiry date, and a status that is one of PENDING, ACCEPTED, DECLINED or EXPIRED. The callout explains a shorthand: "an Engagement" is short for "an engagement Engagement", a field whose name is the same as its type.</p>
+    <p>And the <strong>actions</strong>, each with a where and a then:</p>
+    <ul>
+      <li><code>invite(guest, engagement)</code>: allowed only if there's no invitation for this guest and engagement already. It creates one, with expiry a month from now and status PENDING.</li>
+      <li><code>accept(guest, engagement)</code>: allowed if there's an invitation for them with status PENDING. It sets the status to ACCEPTED.</li>
+      <li><code>decline</code>: left as an exercise; it's the mirror image.</li>
+      <li><code>expire(guest, engagement)</code>: allowed on a pending invitation whose expiry has come. It sets the status to EXPIRED.</li>
+    </ul>
+    <p>Now go back to the questions from the traces slide, because this spec answers them. Can Bob accept and then decline? Accept makes the status ACCEPTED, and decline (like accept) needs PENDING, so no. Can Alice be re-invited after her invitation expires? Invite requires that there's <em>no</em> invitation for her and this party, and the expired one is still there, so no. The details are decided now, and you can argue about whether they were decided well.</p>
+    <p>Which brings me to the question in the blue box. What's an invariant of this state, something that's always true in every reachable state?</p>
+  </div>
+  <details class="aside" data-kind="you">
+    <summary><span class="tag">For you</span><span class="tease">The invariant, and a line worth reading twice</span></summary>
+    <div class="body">
+      <p>Try the invariant yourself first. My answer: <em>for any guest and engagement there is at most one invitation</em>. It holds initially (no invitations), and every action preserves it: only <code>invite</code> creates invitations, and its where clause refuses to create a second. That's the standard way to argue an invariant, and it's the exact shape of E2's first question about GiftRegistering.</p>
+      <p>Then look closely at <code>expire</code>'s where clause: "with expiry after now". Read literally, that says the expiry date is still in the future, which is backwards. I think it means "now is after the expiry", but I may be misreading the slide. Either way, spotting slips like this is a real skill when you review a spec, or code an LLM wrote from one.</p>
+      <p>One more thing to notice: <code>accept</code> doesn't check the date. If nothing triggers <code>expire</code> on time, a late acceptance goes through. Whether that's acceptable depends on how expiry gets triggered, which is a question for the coordination lecture.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 26 -->
+<article class="slide" data-page="26" data-title="a different version">
+  <div class="narration">
+    <p>Here's a different version. The state is identical, so I've greyed it out. What's changed is in red.</p>
+    <p><code>invite</code> now <em>returns</em> something: an invitation. Its signature ends <code>: (invitation: Invitation)</code>, and the then clause ends "and return it". And <code>accept</code> and <code>expire</code> now take that invitation as their argument, instead of a guest and an engagement. Accept's precondition simplifies to "invitation has status PENDING".</p>
+    <p>It's a small edit on the page. Let's see whether it's a small change in the design.</p>
+  </div>
+</article>
+
+<!-- 27 -->
+<article class="slide" data-page="27" data-title="what difference does it make?">
+  <div class="narration">
+    <p>Two questions. Use the code to answer on Commons.</p>
+    <p>First: what difference does this design make in practice? Think about how a guest actually accepts. In the first version, accepting needs to know who the guest is and which engagement. So the guest probably has to be logged in, and find the party. In the second version, all you need is the invitation. You can put it in a link, email it, and whoever clicks the link can accept. That's how most real invitations work, and it's a different experience.</p>
+    <p>Second: suppose we allow more than one pending invitation for the same guest and engagement. Which actions change, and how? In the first version, invite's where clause goes, and then accept is in trouble. Given a guest and an engagement, there might be two pending invitations, and "accept" doesn't say which. You'd have to invent a rule. In the second version, invite's where clause goes and nothing else changes, because accept already names exactly one invitation.</p>
+    <p>So returning the invitation made the design more flexible and changed what users do. That returned thing has a name.</p>
+  </div>
+  <details class="aside" data-kind="industry">
+    <summary><span class="tag">In practice</span><span class="tease">Handles are bearer credentials</span></summary>
+    <div class="body">
+      <p>The link-in-an-email version has a security consequence that the slide leaves for discussion. If <code>accept(invitation)</code> doesn't check who's calling, then anyone who has the link can accept. That's the same model as "anyone with the link can view" in Google Docs, or a password reset token. Engineers call this a bearer token or a capability URL: possession is authority.</p>
+      <p>That's often fine (it's why invite links are convenient), and it means the handle has to be unguessable and should expire. In concept terms, deciding who may call <code>accept</code> is a separate concern, which the course handles later by composing concepts.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 28 -->
+<article class="slide" data-page="28" data-title="handles: a powerful tool">
+  <div class="narration">
+    <p>It's called a handle, and it's one of the most useful tools in concept design.</p>
+  </div>
+</article>
+
+<!-- 29 -->
+<article class="slide" data-page="29" data-title="invitation is a handle">
+  <div class="narration">
+    <p>When you invoke the invite action, you get an invitation back: <code>invite(guest1, engagement1): (invitation3)</code>.</p>
+    <p>I want to be very clear about this. The invitation is not an object. You can't look inside it. It doesn't have methods, and you can't ask it for its guest or its expiry date. It's just a handle, an identifier. The information about invitation3 lives in the concept's state, and the only way to get at it is through the concept's actions.</p>
+    <p>If you come from object-oriented programming, this will feel odd at first. It's deliberate. It's what keeps concepts independent of each other: another part of the app can hold on to invitation3 and pass it around without knowing or depending on anything about how Inviting works.</p>
+  </div>
+</article>
+
+<!-- 30 -->
+<article class="slide" data-page="30" data-title="what other concepts use handles?">
+  <div class="narration">
+    <p>Once you look, handles are everywhere.</p>
+    <p><em>Sessioning</em>: when you log in, you get a session identifier. <em>SelfJoining</em> in Zoom: the handle is the meeting ID. <em>Reserving</em> in OpenTable: a reservation code. <em>AccessTokening</em> in OAuth: an access token. <em>Returning</em> in Amazon: the return approval.</p>
+    <p>And how are handles passed around? As a URL, like a Zoom link. In a browser cookie, like your Amazon shopping cart. In a QR code, like an Amazon return you take to a store. Or as an alphanumeric string, like the six-letter code on an airline booking.</p>
+    <p>That airline code is a good one to think about. With it and your surname, you can manage the whole booking from any device, without an account. The handle is doing a lot of work.</p>
+  </div>
+  <details class="aside" data-kind="industry">
+    <summary><span class="tag">In practice</span><span class="tease">Opaque IDs in API design</span></summary>
+    <div class="body">
+      <p>This matches common API advice: return opaque identifiers, not structured ones, and never let clients decode an ID. Stripe's <code>pi_...</code> and <code>cus_...</code> strings work like this. So does referencing another aggregate by ID only in domain-driven design, which keeps one part of the model from reaching into another.</p>
+      <p>Where the concept view adds something is in the <em>design</em> question: who gets the handle, how it travels, and what holding it lets you do. Those decisions are user-visible, as the airline code shows.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 31 -->
+<article class="slide" data-page="31" data-title="concepts are generic">
+  <div class="narration">
+    <p>A second idea that follows from this: concepts are generic.</p>
+  </div>
+</article>
+
+<!-- 32 -->
+<article class="slide" data-page="32" data-title="do the types matter?">
+  <div class="narration">
+    <p>Look at Inviting again. It mentions two types that it doesn't define: Engagement and Guest. So what happens if you pass in the wrong type of individual for an engagement or a guest?</p>
+    <p>Nothing. There's no wrong type. Inviting never looks inside a guest or an engagement. It only stores them and compares them. So you can instantiate Guest with User, Student or Member, and Engagement with Party, GoogleDoc or VideoCall. The same concept serves inviting people to a party, sharing a document and joining a call.</p>
+    <p>We mark this by writing the types as parameters after the name, in red at the top: <code>concept Inviting [Engagement, Guest]</code>. The concept is generic. That's a large part of why concepts can be reused across apps, and why a catalog of them is worth building.</p>
+  </div>
+  <details class="aside" data-kind="debate">
+    <summary><span class="tag">Debate</span><span class="tease">What if the concept needs to know something?</span></summary>
+    <div class="body">
+      <p>The obvious objection: a real invitation system needs the guest's email address, to send the invitation. If Guest is opaque, where does that come from?</p>
+      <p>The concept-design answer is that emailing is a different concept, and the two are wired together outside both. That keeps Inviting reusable, at the cost of spreading one user-visible feature across several concepts plus the glue between them. Whether that's a good trade is the central argument of the next two lectures on coordination and reactions. E2's question 7 asks the same thing about GiftRegistering's Item type, and why a SKU beats a name and price.</p>
+    </div>
+  </details>
+  <details class="aside" data-kind="industry">
+    <summary><span class="tag">In practice</span><span class="tease">It's parametric polymorphism</span></summary>
+    <div class="body">
+      <p>A programmer would call this parametric polymorphism, the thing Java or TypeScript generics give you. <code>Map&lt;K, V&gt;</code> works for any K because it only compares keys. Inviting works for any Guest for the same reason. The difference is that here the rule is enforced by the design discipline, not a compiler: nothing stops you writing "then email the guest" in a then clause, except that it would break the concept.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 33 -->
+<article class="slide" data-page="33" data-title="how Tinder evolved mutual matching">
+  <div class="narration">
+    <p>To finish, a case study in how a concept changes over time: how Tinder evolved mutual matching.</p>
+  </div>
+</article>
+
+<!-- 34 -->
+<article class="slide" data-page="34" data-title="Tinder timeline">
+  <div class="narration">
+    <p>Here's the timeline. In 2012, swiping and mutual matching are the core. Swipe right to like, left to pass, and chat opens only after both people like each other. Two-sided opt-in is the free baseline. That's the <em>MutualMatching</em> concept, and you can see it's a close cousin of Inviting. The purpose is the same kind of mutual consent.</p>
+    <p>In March 2015 Tinder Plus sets the first big paywall. Right-swipes become limited for free users, and Plus sells unlimited likes. In September 2015 comes Super Like: a swipe up that signals special interest <em>before</em> any mutual match, with one free per day and five for Plus. In July 2016 Boost sells placement, putting your profile near the top locally for 30 minutes. And in mid-2017 Tinder Gold's "Likes You" sells the knowledge of who has already swiped right on you.</p>
+    <p>Three questions. Is swipe-up an action of MutualMatching? What does "Likes You" do to MutualMatching? And does this evolution help Tinder's customers?</p>
+    <p>Here's how I'd start on the second one. The whole point of mutual matching is that you learn someone liked you only if you liked them too. Nobody's interest is exposed one-sidedly. "Likes You" sells exactly that one-sided information. It doesn't extend the concept. It undoes its purpose, for anyone who pays.</p>
+  </div>
+  <details class="aside" data-kind="you">
+    <summary><span class="tag">For you</span><span class="tease">Answer the other two in concept terms</span></summary>
+    <div class="body">
+      <p>For the swipe-up question, a useful test: write MutualMatching's actions (<code>like</code>, <code>pass</code>, and perhaps a <code>match</code> that happens when both have liked). Can Super Like be written as another action in the same concept without changing the purpose? Or is it a different concept, closer to <em>Messaging</em> or <em>Notifying</em>, that happens to share the swipe gesture?</p>
+      <p>For "does it help customers", notice the slide says <em>customers</em>, not users. Write your answer in the note box and paste it to me if you want a second opinion. The next slide is Jackson's.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 35 -->
+<article class="slide" data-page="35" data-title="enshittification">
+  <div class="narration">
+    <p>This is a textbook example of a phenomenon that has a technical name, courtesy of Cory Doctorow: enshittification.</p>
+    <p>The story runs in three acts. In act one, the platform is good to its users: the golden age. In act two, having locked the users in, it pivots to being good to its business customers, with ads masquerading as profiles and targeting data sold to advertisers. In act three it claws back value for shareholders, with algorithmic throttling and basic features moving to a paid tier, and the whole thing becomes, in his words, a giant pile of it.</p>
+    <p>Tinder's timeline shows act three happening at the level of concepts. Limiting free likes throttles the core action. Selling "Likes You" moves a basic piece of information behind a paywall, and in doing so breaks the concept's own purpose. When you study a product's concepts over time, you can often see where it changed sides.</p>
+  </div>
+  <details class="aside" data-kind="source">
+    <summary><span class="tag">Source</span><span class="tease">Doctorow's word and book</span></summary>
+    <div class="body">
+      <p>Doctorow coined "enshittification" in blog posts around late 2022 and early 2023, and the cover on the slide is his book <em>Enshittification: Why Everything Suddenly Got Worse and What to Do About It</em> (2025). The American Dialect Society picked it as its 2023 Word of the Year.</p>
+      <p>The act names on the slide ("The Golden Age", "The Pivot", "The Giant Pile of Sh*t") read like chapter or section titles, but I haven't checked them against the book. The Tinder timeline on the previous slide is also the slide's own, and I haven't verified each date.</p>
+    </div>
+  </details>
+  <details class="aside" data-kind="debate">
+    <summary><span class="tag">Debate</span><span class="tease">Is every paywall enshittification?</span></summary>
+    <div class="body">
+      <p>A fair pushback: a free service has to make money somehow, and charging for extras is more honest than selling data. Many people would call Tinder Plus a normal freemium model.</p>
+      <p>The concept lens gives a sharper line than "free versus paid". Selling <em>more</em> of a concept (more swipes, more boosts) is one thing. Selling a feature that defeats the purpose other users signed up for, such as learning who liked you without them learning the same, is another, because the non-paying users are now worse off inside the concept they thought they were using.</p>
+    </div>
+  </details>
+</article>
+
+<!-- 36 -->
+<article class="slide" data-page="36" data-title="summary">
+  <div class="narration">
+    <p>Let me sum up.</p>
+  </div>
+</article>
+
+<!-- 37 -->
+<article class="slide" data-page="37" data-title="behavior = actions + states">
+  <div class="narration">
+    <p>Software systems do things. Software systems remember things. What they do affects what they remember, and what they remember affects what they do.</p>
+    <p>That loop is the whole of behaviour. The actions are the doing, and their then clauses change the memory. The state is the memory, and it feeds back through the where clauses to decide what can be done next. Write both down, and the inductive definition gives you every possible trace. That's what a concept's state and actions are for, and it's what the operational principle alone could never give you.</p>
+  </div>
+</article>
+
+<!-- 38 -->
+<article class="slide" data-page="38" data-title="parting thought">
+  <div class="narration">
+    <p>One parting thought.</p>
+  </div>
+</article>
+
+<!-- 39 -->
+<article class="slide" data-page="39" data-title="the concept behind URLs">
+  <div class="narration">
+    <p>Tim Berners-Lee, in Wired in 1999: "Well, the most important thing that was new was the idea of URI, or URL."</p>
+    <p>Of all the things that went into the web, he picked that one. So here's a question for you. What is the concept behind URLs? What are its actions and its state? After today you might notice it has something to do with handles. Join the discussion on the forum.</p>
+  </div>
+  <details class="aside" data-kind="source">
+    <summary><span class="tag">Source</span><span class="tease">The rest of the Berners-Lee sentence</span></summary>
+    <div class="body">
+      <p>The slide cuts the quote short. As it's usually quoted, it continues: "...that any piece of information anywhere should have an identifier, which will allow you to get hold of it." The slide credits Wired, 1999. I found the fuller wording on quotation sites but couldn't confirm the original article, so treat the source details as the slide's.</p>
+    </div>
+  </details>
+  <details class="aside" data-kind="you">
+    <summary><span class="tag">For you</span><span class="tease">Do the forum question in the note box</span></summary>
+    <div class="body">
+      <p>The forum is for enrolled students, so write your attempt below instead: a name, purpose, principle, state and actions for whatever concept you think URLs embody. Don't worry about getting "the" answer. There are several defensible ones, depending on whether you think the URL is naming a resource, locating it, or both.</p>
+      <p>It's also good preparation for E2, whose last exercise asks for a <em>URL Shortening</em> concept. Paste your attempt to me and I'll push on it rather than write it for you.</p>
+    </div>
+  </details>
+</article>
+
+<section>
+  <h2>Check yourself</h2>
+  <p class="meta">Try answering in your head, or in the note box at the bottom, before opening each answer.</p>
+
+  <div class="check">
+    <p class="q">1. Why isn't the operational principle enough to define a concept's behaviour?</p>
+    <details><summary>Show answer</summary>
+      <p>It describes one archetypal scenario to explain how the concept works. It leaves out corner cases: can a guest change their mind, can someone be re-invited after expiry, what happens to an accepted invitation at the expiry date. Traces 3 and 4 on slide 15 are consistent with some readings of the principle and not others. The state and actions settle those questions.</p>
+    </details>
+  </div>
+
+  <div class="check">
+    <p class="q">2. State the inductive definition of a concept's traces in your own words.</p>
+    <details><summary>Show answer</summary>
+      <p>Base case: the empty trace is a trace, and its state is the initial state. Step: if <em>t</em> is a trace ending in state <em>s</em>, and some action's where clause holds in <em>s</em> and its then clause takes <em>s</em> to <em>s′</em>, then <em>t</em> followed by that action is a trace, ending in <em>s′</em>. Nothing else is a trace.</p>
+    </details>
+  </div>
+
+  <div class="check">
+    <p class="q">3. In Counting, the traces <code>increment</code> and <code>increment, decrement, increment</code> are different. What do they have in common, and why does that matter?</p>
+    <details><summary>Show answer</summary>
+      <p>They end in the same state, counter = 1. The state is what the concept remembers, and it's all that's needed to decide which actions can come next. So two different histories that lead to the same state have the same possible futures.</p>
+    </details>
+  </div>
+
+  <div class="check">
+    <p class="q">4. In the second version of Inviting, <code>invite</code> returns an invitation that <code>accept</code> takes as its argument. Name two consequences of that change.</p>
+    <details><summary>Show answer</summary>
+      <p>The invitation can be passed around as a handle, for example in an emailed link, so accepting doesn't require identifying the guest and engagement. And it becomes easy to allow several pending invitations for the same guest and engagement: only invite's where clause changes, because accept already names one invitation. (A third, if you want one: whoever holds the handle can accept, which is a security decision.)</p>
+    </details>
+  </div>
+
+  <div class="check">
+    <p class="q">5. What does it mean for Inviting to be generic over Guest and Engagement, and what does it rule out?</p>
+    <details><summary>Show answer</summary>
+      <p>The concept never inspects guests or engagements. It only stores and compares them, so any type works: users, students, parties, documents, calls. It rules out the concept depending on properties of those types, such as a guest's email address. That behaviour has to come from another concept composed with this one.</p>
+    </details>
+  </div>
+
+  <div class="check">
+    <p class="q">6. Why does Tinder's "Likes You" feature damage the MutualMatching concept, and not just add to it?</p>
+    <details><summary>Show answer</summary>
+      <p>The purpose of mutual matching is that interest is revealed only when it's mutual. "Likes You" reveals one-sided interest to paying users, so for them the concept no longer serves its purpose, and the free users who liked them are exposed without knowing it. It's an example of Doctorow's enshittification happening inside a single concept.</p>
+    </details>
+  </div>
+
+  <h2>Your thoughts</h2>
+  <div id="general-note"></div>
+
+  <nav class="nextprev">
+    <a href="intro-to-concepts.html"><small>Previous</small>Intro to concept design</a>
+    <a class="next" href="designing-coordination.html"><small>Next</small>Designing coordination</a>
+  </nav>
+</section>
+
+<footer class="site">
+  Slides © MIT 6.1040 staff, loaded from <a href="https://61040.github.io/fa26/">61040.github.io</a> and not copied here. Narration and notes written by Claude for personal study; not affiliated with MIT.
+</footer>
+</main>
+
+<script type="module" src="../assets/lecture.js"></script>
+</body>
+</html>
