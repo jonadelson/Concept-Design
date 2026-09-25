@@ -13,7 +13,8 @@ A personal GitHub Pages site for following MIT 6.1040 Software Design (Fall 2026
 2. Copy `lectures/welcome.html` as the template. Set `data-lecture` (slug) and `data-pdf` (absolute MIT URL) on `<body>`.
 3. Write one `<article class="slide" data-page="N" data-title="...">` per slide, containing `.narration` and optional `<details class="aside" data-kind="source|industry|debate|you">` margin notes.
 4. End with 4–6 self-check questions and the `#general-note` block, and update prev/next links and `index.html`.
-5. Never copy slide images into the repo. Slides are MIT's copyrighted material and are only embedded live.
+5. Verify before publishing: check the HTML parses, `data-page` runs 1..N, and run a Playwright pass at iPhone size (first and last slide render, prev/next links resolve, no console errors). Then push to `main`, which GitHub Pages serves at https://jonadelson.github.io/Concept-Design/.
+6. Never copy slide images into the repo. Slides are MIT's copyrighted material and are only embedded live.
 
 ## Voice and honesty rules
 - Narration is in the lecturer's voice but is a reconstruction; the page says so. For photo-only slides, use a `<p class="stage">` description and don't invent speech.
