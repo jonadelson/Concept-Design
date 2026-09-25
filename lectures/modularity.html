@@ -56,7 +56,7 @@
     <summary><span class="tag">Source</span><span class="tease">This is Parnas's question, from 1972</span></summary>
     <div class="body">
       <p>David Parnas, "On the Criteria To Be Used in Decomposing Systems into Modules", <em>Communications of the ACM</em> 15(12), 1972. He compared two ways of splitting the same small program and argued that the better split puts each design decision likely to change inside one module. He called that <em>information hiding</em>.</p>
-      <p>Jackson and Meng cite this paper directly in the related-work section of <a href="https://arxiv.org/abs/2508.14511">their 2025 paper</a> on concepts and synchronizations, so the connection is theirs, not mine. The twist this lecture adds is that the unit being hidden is a piece of user-facing functionality rather than a data structure.</p>
+      <p>Jackson and Meng cite this paper directly in the related-work section of <a href="https://arxiv.org/abs/2508.14511">their 2025 paper</a> on concepts and synchronizations, so the connection is theirs, not mine. The difference in this lecture, as I read it, is that the unit being hidden is a piece of user-facing functionality rather than a data structure.</p>
     </div>
   </details>
 </article>
@@ -141,7 +141,7 @@
 <!-- 10 -->
 <article class="slide" data-page="10" data-title="a sample concept: Upvoting">
   <div class="narration">
-    <p>Let's zoom in on one. The circles mark Upvoting in three different places: the triangle next to a Hacker News story, the "Recommend" link under a newspaper comment, and the up and down arrows on a Q&amp;A site. Different names and slightly different behaviour, but the same idea.</p>
+    <p>Let's zoom in on one. The circles mark Upvoting in three different places: the triangle next to a Hacker News story, the "Recommend" link under a newspaper-style reader comment, and the up and down arrows on a Q&amp;A site. Different names and slightly different behaviour, but the same idea.</p>
     <p>That lets me restate what a concept is. It's a coherent course of action that a user engages in. It's realized as a mechanism, some state and code that make it work. It's reusable and familiar, which is why you knew what the Recommend link did the first time you saw it. And, the property we care about today, it can be designed, coded and explained independently of the other concepts around it.</p>
   </div>
 </article>
@@ -173,13 +173,13 @@
 <article class="slide" data-page="13" data-title="so where's the innovation?">
   <div class="narration">
     <p>It clearly exists. The slide gives Hacker News at over ten million page views a day, so somebody thought it was worth building, and many people think it was worth using.</p>
-    <p>Part of the answer is what Margaret Boden calls combinational creativity: taking familiar elements and putting them together in a new way. Some of the innovation is inside the concepts themselves. In Hacker News's Posting, a post is a title plus a link, which is a narrower thing than a post on most social sites, and that constraint shapes the whole community.</p>
+    <p>Part of the answer is what Margaret Boden calls combinational creativity: taking familiar elements and putting them together in a new way. Some of the innovation is inside the concepts themselves. In Hacker News's Posting, a post is a title plus a link, which is a narrower thing than a post on most social sites.</p>
     <p>But the part I want to focus on is highlighted: innovation in how concepts are <em>coordinated</em>. On Hacker News you can't downvote until your own posts have been upvoted enough. That rule isn't part of Upvoting and isn't part of KarmaTracking. It's a relationship between them. And that's where much of an app's particular character comes from.</p>
   </div>
   <details class="aside" data-kind="source">
     <summary><span class="tag">Source</span><span class="tease">Boden's three kinds of creativity</span></summary>
     <div class="body">
-      <p>Margaret Boden, <em>The Creative Mind: Myths and Mechanisms</em> (1990, with a revised second edition in 2004). She distinguishes <em>combinational</em> creativity (new combinations of familiar ideas), <em>exploratory</em> (working within an established style or space) and <em>transformational</em> (changing the space itself). Concept design leans heavily on the first, which is also the kind the "How to innovate" lecture argued you can learn to do on purpose.</p>
+      <p>Margaret Boden, <em>The Creative Mind: Myths and Mechanisms</em> (1990, with a revised second edition in 2004). She distinguishes <em>combinational</em> creativity (new combinations of familiar ideas), <em>exploratory</em> (working within an established style or space) and <em>transformational</em> (changing the space itself). Concept design leans heavily on the first.</p>
     </div>
   </details>
 </article>
@@ -275,7 +275,7 @@
 <article class="slide" data-page="22" data-title="an architectural view: externalizing connections">
   <div class="narration">
     <p>Step back and compare two architectures. On the left, what I'll call 1980s software development: modules with arrows between them, each arrow a dependency. This module calls that one, which reads from a third. Every arrow is a reason you can't change one module without checking another.</p>
-    <p>On the right, the concepts (the icons stand for things like notifying, scheduling, karma and a catalog) have no arrows between them. The dotted lines are mediated. Control and data pass between them only through a conductor that coordinates, and the conductor reads from a score, the app-specific details. That's the set of reactions. The music for this particular app lives there, not in the instruments.</p>
+    <p>On the right, the concepts, drawn as icons (a bell, a calendar, a book, a rosette), have no arrows between them. The dotted lines are mediated. Control and data pass between them only through a conductor that coordinates, and the conductor reads from a score, the app-specific details. That's the set of reactions. The music for this particular app lives there, not in the instruments.</p>
   </div>
   <details class="aside" data-kind="industry">
     <summary><span class="tag">In practice</span><span class="tease">Orchestration, microservices, and the tangle</span></summary>
@@ -359,7 +359,7 @@
 <article class="slide" data-page="30" data-title="EventPlanning and Inviting">
   <div class="narration">
     <p>In concept terms, two concepts are involved. <strong>EventPlanning</strong>, whose purpose is to record your upcoming engagements, with actions to create and delete events. And Inviting, whose purpose, as we saw at the start, is mutual consent, with actions to accept and decline.</p>
-    <p>The red dotted line is the bad reaction: deleting an event triggers declining the invitation, or worse. Deleting from my calendar is about my records. Declining is a message to other people. Tying them together removes a choice the user should have had, and it undermines Inviting's own purpose, because a declination I didn't consent to send isn't consent.</p>
+    <p>The red dotted line is the bad reaction: deleting an event triggers declining the invitation. Deleting from my calendar is about my records. Declining is a message to other people. Tying them together removes a choice the user should have had, and it undermines Inviting's own purpose, because a declination I didn't consent to send isn't consent.</p>
   </div>
 </article>
 
@@ -504,7 +504,7 @@
 <!-- 45 -->
 <article class="slide" data-page="45" data-title="adding commenting">
   <div class="narration">
-    <p>Then commenting. Comments are on posts, so Post gets a set of comments and an <code>addComment</code> method. Look how Post has grown. And notice that the karma threshold in downvote has quietly changed from 10 to 20, which is the sort of edit that happens in the middle of someone else's feature.</p>
+    <p>Then commenting. Comments are on posts, so Post gets a set of comments and an <code>addComment</code> method. Look how Post has grown. (The karma threshold in downvote has also changed from 10 to 20 since the last slide, to match the rule from earlier.)</p>
   </div>
 </article>
 
@@ -513,7 +513,7 @@
   <div class="narration">
     <p>So what's wrong with it? Colour each line by the concept it serves. User authentication is red, Posting green, Upvoting brown, Commenting purple, Karma blue.</p>
     <p>User is red and blue. Post is green, brown, blue and purple. That's <strong>conflation</strong>: Post mixes posting, voting, karma and comments. The consequence is that the classes aren't reusable. You can't take this Post class to an app that doesn't have karma points.</p>
-    <p>Now look at a single colour. Karma is in both classes. Commenting is split between Post and, presumably, a Comment class. That's <strong>fragmentation</strong>. And its consequence is that the classes can't be built independently. To build Post, you need User to exist already, because Post calls its methods.</p>
+    <p>Now look at a single colour. Karma is in both classes. Commenting is split between Post and a Comment class. That's <strong>fragmentation</strong>. And its consequence is that the classes can't be built independently. To build Post, you need User to exist already, because Post calls its methods.</p>
     <p>Both criteria fail, in a program with five features and two classes.</p>
   </div>
   <details class="aside" data-kind="source">
@@ -596,7 +596,7 @@
   <div class="check">
     <p class="q">2. Why not just add the karma check to Upvoting's downvote action?</p>
     <details><summary>Show answer</summary>
-      <p>It would conflate a Hacker News policy with a generic voting mechanism. Upvoting would then depend on authors and karma, so it couldn't be reused in an app without them, understood on its own, or built before KarmaTracking. Putting the rule in a reaction keeps both concepts generic.</p>
+      <p>It would conflate a Hacker News policy with a generic voting mechanism. Upvoting would then depend on authors and karma, so it couldn't be reused in an app without them, and it couldn't be built before KarmaTracking existed. Putting the rule in a reaction keeps both concepts generic.</p>
     </details>
   </div>
 
